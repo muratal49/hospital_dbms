@@ -1,16 +1,10 @@
 -- Nathanael Kumar - Work for CSC 261 Group 3, Milestone 3 - November 15, 2025
 
-
-CREATE TABLE Appointment(
+CREATE TABLE Department(
     id INT AUTO_INCREMENT,
-    start DATETIME NOT NULL,
-    end DATETIME NOT NULL,
-    notes TINYTEXT DEFAULT "",
-    patient_id INT NOT NULL,
-    doctor_id INT NOT NULL,
-    PRIMARY KEY (id),
-    FOREIGN KEY (patient_id) REFERENCES Patient(id),
-    FOREIGN KEY (doctor_id) REFERENCES Doctor(id)
+    name VARCHAR(32) NOT NULL UNIQUE,
+    building VARCHAR(32) NOT NULL,
+    PRIMARY KEY (id)
 )
 
 CREATE TABLE Doctor(
@@ -26,9 +20,23 @@ CREATE TABLE Doctor(
     FOREIGN KEY (department_id) REFERENCES Department(id)
 )
 
-CREATE TABLE Department(
+CREATE TABLE Appointment(
     id INT AUTO_INCREMENT,
-    name VARCHAR(32) NOT NULL UNIQUE,
-    building VARCHAR(32) NOT NULL,
-    PRIMARY KEY (id)
+    start DATETIME NOT NULL,
+    end DATETIME NOT NULL,
+    notes TINYTEXT DEFAULT "",
+    patient_id INT NOT NULL,
+    doctor_id INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (patient_id) REFERENCES Patient(id),
+    FOREIGN KEY (doctor_id) REFERENCES Doctor(id)
+)
+
+CREATE TABLE Prescription(
+	id INT AUTO_INCREMENT,
+	name VARCHAR(64) NOT NULL,
+	dosage VARCHAR(16) NOT NULL,
+	expiration DATETIME NOT NULL,
+    PRIMARY KEY (id),
+	FOREIGN KEY (appointment_id) REFERENCES appointment(id)
 )
