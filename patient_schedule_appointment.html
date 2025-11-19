@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Login</title>
+		<link rel="stylesheet" href="styles.css" />
+	</head>
+	<body>
+		<h1 class="header">Patient Portal - Schedule Appointment</h1>
+
+		<div class="form_container">
+
+			<form action="/submit" method="post">
+				<div class="form_body">
+     					<h2 class="form_header">Book appointment</h2>
+
+					<div class="form_field_container">
+
+						<label for="caregiver">Caregiver:</label>
+						<input type="text" id="caregiver" name="caregiver"<br><br>
+
+						<label for="date">Date:</label>
+						<input type="date" id="date" name="date"<br><br>
+
+						<label for="time">Time:</label>
+						<input type="time" id="time" name="time"<br><br>
+
+						<button type="submit">Schedule</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</body>
+</html>
