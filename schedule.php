@@ -14,7 +14,7 @@ if ($conn->connect_error) {
 }
 
 $message = "";
-$availableTimes = [];
+$departmentAvailability = [];
 
 // Redirect if already logged in
 if (!isset($_SESSION["patient_id"])) {
@@ -23,82 +23,93 @@ if (!isset($_SESSION["patient_id"])) {
 }
 
 if (isset($_POST['search_btn'])) {
-  $doctor = trim($_POST['doctor']);
-  $department = trim($_POST['department']) ;
+  $department = trim($_POST['department']);
   $datestr = trim($_POST['date']);
   $message = '';
 
-  if ($department == '' || $doctor == '' || $datestr == '') {
-    $message = 'Please fill in all boxes';
-  }
-
-  // Validate name
-  if ($message == '') {
-    $name_parts = explode(' ', $doctor);
-
-    if (count($name_parts) != 2) {
-      $message = 'Incorrect first and last name';
-    } else {
-      $first_name = trim($name_parts[0]);
-      $last_name = trim($name_parts[1]);
-    }
+  if ($department == '' || $datestr == '') {
+    $message = 'Please fill in all fields';
   }
 
   // Validate time
   if ($message == '') {
     $date_obj = DateTime::createFromFormat('Y-m-d', $datestr);
 
+    // Not in date format or not a valid date
     if ($date_obj === false || $date_obj->format('Y-m-d') !== $datestr) {
       $message = 'Enter a valid date';
     }
   }
 
+  // Query doctors in department
+  if ($message == '') {
+    $sql = "SELECT doc.id, doc.first_name, doc.last_name
+            FROM department dept
+            JOIN doctor doc on doc.department_id = dept.id
+            WHERE dept.name = '$department'";
+    $result = $conn->query($sql);
+    $doctors = $result->fetch_all(MYSQLI_ASSOC);
+
+    if (count($doctors) == 0) {
+      $message = 'Invalid department';
+    }
+  }
+
   // Main logic
   if ($message == '') {
-    $sql = "SELECT a.start, a.end 
-          FROM appointment a
-          JOIN doctor d ON d.id = a.doctor_id
-          JOIN department dept on dept.id = d.department_id
-          WHERE 
-            d.first_name = '$first_name' AND 
-            d.last_name = '$last_name' AND
-            dept.name = '$department' AND
-            a.start BETWEEN '$datestr' AND DATE_ADD('$datestr', INTERVAL 24 HOUR)
-          ORDER BY a.start";
-    $result = $conn->query($sql);
-    $aptmts = $result->fetch_all(MYSQLI_ASSOC);
+    $departmentAvailability = [];
 
-    // Get open time slots
-    $curr = new DateTime("$datestr 09:00:00");
-    $end = new DateTime("$datestr 20:00:00");
+    foreach ($doctors as $doctor) {
+      $doctor_id = $doctor['id'];
+      $doctor_name = $doctor['first_name'] . ' ' . $doctor['last_name'];
+      $availableTimes = [];
 
-    $availableTimes = [];
-    foreach ($aptmts as $aptmt) {
-      $aptmt_start = new DateTime($aptmt["start"]);
-      $aptmt_end = new DateTime($aptmt["end"]);
+      // Query appointments from doctors
+      $sql = "SELECT a.start, a.end 
+              FROM appointment a
+              WHERE 
+                a.doctor_id = '$doctor_id' AND
+                a.start BETWEEN '$datestr' AND DATE_ADD('$datestr', INTERVAL 24 HOUR)";
 
-      // Have a free block if there is time between now and appointment
-      if ($aptmt_start > $curr) {
+      $result = $conn->query($sql);
+      $aptmpts = $result->fetch_all(MYSQLI_ASSOC);
+
+      // Get open time slots
+      $curr = new DateTime("$datestr 09:00:00");
+      $end = new DateTime("$datestr 20:00:00");
+
+      $availableTimes = [];
+      foreach ($aptmts as $aptmt) {
+        $aptmt_start = new DateTime($aptmt["start"]);
+        $aptmt_end = new DateTime($aptmt["end"]);
+
+        // Have a free block if there is time between now and appointment
+        if ($aptmt_start > $curr) {
+          array_push($availableTimes, [
+            "doctor" => $doctor,
+            "start" => $curr->format("H:i"),
+            "end" => $aptmt_start->format("H:i")
+          ]);
+        }
+
+        // Update next interval start time
+        if ($aptmt_end > $curr) {
+          $curr = $aptmt_end;
+        }
+      }
+
+      // Check if there is remaining time after lost appointment
+      if ($curr < $end) {
         array_push($availableTimes, [
           "doctor" => $doctor,
           "start" => $curr->format("H:i"),
-          "end" => $aptmt_start->format("H:i")
+          "end" => $end->format("H:i")
         ]);
       }
 
-      // Update next interval start time
-      if ($aptmt_end > $curr) {
-        $curr = $aptmt_end;
+      if (!empty($availableTimes)) {
+        $departmentAvailability[$doctor_name] = $availableTimes;
       }
-    }
-
-    // Check if there is remaining time after lost appointment
-    if ($curr < $end) {
-      array_push($availableTimes, [
-        "doctor"=> $doctor,
-        "start" => $curr->format("H:i"),
-        "end" => $end->format("H:i")
-      ]);
     }
   }
 }
@@ -117,9 +128,9 @@ $conn->close();
 </head>
 
 <body>
-  <!-- <?php if ($message != "") {
+  <?php if ($message != "") {
     echo "<p>$message<p>";
-  } ?> -->
+  } ?>
 
   <h1 class="header">Patient Portal - Query for Available Doctors</h1>
 
@@ -133,9 +144,6 @@ $conn->close();
           <label for="department">Department:</label>
           <input class="form_field" type="text" id="department" name="department" />
 
-          <label for="doctor">Doctor:</label>
-          <input class="form_field" type="text" id="doctor" name="doctor" />
-
           <label for="datetime">Date:</label>
           <input class="form_field" type="date" id="date" name="date" />
 
@@ -146,7 +154,7 @@ $conn->close();
       </div>
     </form>
   </div>
-
+<!-- 
   <table class="table">
     <tr>
       <th>Doctor</th>
@@ -160,22 +168,24 @@ $conn->close();
       <td>Joe Baloney</td>
       <td>11:30-12:00pm <br> 10</td>
     </tr>
-  <!-- </table>
+  </table> -->
 
   <table class="table">
     <tr>
       <th>Doctor</th>
       <th>Times</th>
-
     </tr>
-    <?php foreach ($availableTimes as $slot): ?>
+    <?php foreach ($departmentAvailability as $doctor_name => $slots): ?>
       <tr>
-        <td><?= $slot["doctor"] ?></td>
-        <td><?= $slot["start"] ?> - <?= $slot["end"] ?>
-        <td></td>
+        <td><?= $doctor_name ?></td>
+        <td>
+          <?php foreach ($slots as $slot): ?>
+            <?= $slot["start" ]?> - <?= $slot["end"]?><br>
+          <?php endforeach; ?>
+        </td>
       </tr>
     <?php endforeach; ?>
-  </table> -->
+  </table>
 </body>
 
 </html>
