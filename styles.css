@@ -1,100 +1,72 @@
 body {
-  background-color: rgb(89, 140, 234);
+    margin: 0;
+    padding: 0;
+    background-color: #4A90E2;
+    font-family: Arial, sans-serif;
 }
 
-.message-container {
-  text-align: center;
+h1 {
+    text-align: center;
+    color: white;
+    padding-top: 40px;
+    font-size: 28px;
 }
 
-.error-message {
-  display: inline-block;
-  color: red;
-  padding: 15px;
-  margin-left: auto;
-  margin-right: auto;
-  background-color: lightcoral;
-  border: 2px solid black;
+.container {
+    width: 60%;
+    margin: 40px auto;
+    background: #f7f7f7;
+    border: 2px solid #ccc;
+    padding: 30px;
+    box-sizing: border-box;
 }
 
-.header {
-  text-align: center;
-  margin: 30px;
-  color: white
+.form-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
 }
 
-.form_container {
-  display: flex;
-  width: 80%;
-  justify-content: space-between;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 50px;
-  padding-top: 30px;
+.form-group {
+    width: 48%;
 }
 
-.form {
-  width: 45%;
-  border: 2px solid;
-  background-color: lightgray;
+.label {
+    font-weight: bold;
+    margin-bottom: 6px;
+    font-size: 18px;
 }
 
-.form_header {
-  margin: 10px;
-  text-align: center;
+input, select {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    margin-top: 5px;
+    box-sizing: border-box;
 }
 
-.form_body {
-  width: 80%;
-  height: 80%;
-  margin-left: auto;
-  margin-right: auto;
+.patient-name {
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 10px;
 }
 
-.form_field_container {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: left;
-  width: 100%;
-  padding-top: 20px;
-  margin-bottom: 10px;
-  box-sizing: border-box;
+.button-container {
+    text-align: center;
+    margin-top: 20px;
 }
 
-.form_field_container label {
-  font-weight: 700;
-  margin-top: 10px;
+.button {
+    width: 50%;
+    padding: 12px;
+    font-size: 20px;
+    background-color: #f7c4c4;
+    border: 1px solid #c99;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
 }
 
-.form_field {
-  margin-top: 7px;
-  width: 95%;
+.button:hover {
+    background-color: #f5b3b3;
 }
-
-.form_button {
-  margin-top: 20px;
-  margin-bottom: 15px;
-  width: 97%;
-}
-
-.info_box {
-  width: 80%;
-  margin: 0px auto;
-  background-color: lightgray;
-  border: 2px solid;
-}
-
-.info_box_header {
-  text-align: center;
-}
-
-.info_box_body {
-  display: flex;
-  box-sizing: border-box;
-  justify-content: space-around;
-}
-
-.info_box_body_left, .info_box_body_right {
-  font-size: 20px;
-}
-
