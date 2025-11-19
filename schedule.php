@@ -13,6 +13,92 @@ if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
 
+function getAvailableSlots($conn, $department, $datestr): array
+{
+  $departmentAvailability = [];
+
+  // Get appointments from doctors in the department
+  $sql = "SELECT 
+            doc.id as doctor_id, 
+            doc.email as doctor_email,
+            CONCAT(doc.first_name, ' ', doc.last_name) as doctor_name,
+            apt.start, apt.end
+          FROM doctor doc
+          JOIN department dpt on doc.department_id = dpt.id
+          LEFT JOIN appointment apt on doc.id = apt.doctor_id
+            AND apt.start BETWEEN '$datestr' AND DATE_ADD('$datestr', INTERVAL 24 HOUR)
+          WHERE 
+            dpt.name = '$department'
+          ORDER BY doc.id, apt.start";
+  $result = $conn->query($sql);
+  $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+  $doctor_schedules = [];
+
+  // Create map for doctor id -> appointments (helps with handling NULL)
+  foreach ($rows as $row) {
+    $id = $row["doctor_id"];
+
+    if (!isset($doctor_schedules[$id])) {
+      $doctor_schedules[$id] = [
+        'name' => $row['doctor_name'],
+        'appointments' => []
+      ];
+    }
+
+    if ($row['start'] != NULL) {
+      $doctor_schedules[$id]['appointments'][] = [
+        'start' => $row['start'],
+        'end' => $row['end']
+      ];
+    }
+  }
+
+
+  foreach ($doctor_schedules as $doc_id => $doc_data) {
+    $availableTimes = [];
+
+    // Get open time slots
+    $curr = new DateTime("$datestr 09:00:00");
+    $end = new DateTime("$datestr 20:00:00");
+
+    foreach ($doc_data['appointments'] as $aptmt) {
+      $aptmt_start = new DateTime($aptmt["start"]);
+      $aptmt_end = new DateTime($aptmt["end"]);
+
+      // Free block between now and next appointment
+      if ($aptmt_start > $curr) {
+        array_push($availableTimes, [
+          "start" => $curr->format("H:i"),
+          "end" => $aptmt_start->format("H:i")
+        ]);
+      }
+
+      // Update next interval start time
+      if ($aptmt_end > $curr) {
+        $curr = $aptmt_end;
+      }
+    }
+
+    // Check if there is remaining time after lost appointment
+    if ($curr < $end) {
+      array_push($availableTimes, [
+        "start" => $curr->format("H:i"),
+        "end" => $end->format("H:i")
+      ]);
+    }
+
+    if (!empty($availableTimes)) {
+      $departmentAvailability[] = [
+        "doctor" => $doc_data["name"],
+        "times" => $availableTimes
+      ];
+    }
+  }
+
+  return $departmentAvailability;
+}
+
 $message = "";
 $departmentAvailability = [];
 
@@ -43,73 +129,12 @@ if (isset($_POST['search_btn'])) {
 
   // Query doctors in department
   if ($message == '') {
-    $sql = "SELECT doc.id, doc.first_name, doc.last_name
-            FROM department dept
-            JOIN doctor doc on doc.department_id = dept.id
-            WHERE dept.name = '$department'";
-    $result = $conn->query($sql);
-    $doctors = $result->fetch_all(MYSQLI_ASSOC);
+    $availableSlots = getAvailableSlots($conn, $department, $datestr);
 
-    if (count($doctors) == 0) {
+    if (count($availableSlots) == 0) {
       $message = 'Invalid department';
-    }
-  }
-
-  // Main logic
-  if ($message == '') {
-    $departmentAvailability = [];
-
-    foreach ($doctors as $doctor) {
-      $doctor_id = $doctor['id'];
-      $doctor_name = $doctor['first_name'] . ' ' . $doctor['last_name'];
-      $availableTimes = [];
-
-      // Query appointments from doctors
-      $sql = "SELECT a.start, a.end 
-              FROM appointment a
-              WHERE 
-                a.doctor_id = '$doctor_id' AND
-                a.start BETWEEN '$datestr' AND DATE_ADD('$datestr', INTERVAL 24 HOUR)";
-
-      $result = $conn->query($sql);
-      $aptmpts = $result->fetch_all(MYSQLI_ASSOC);
-
-      // Get open time slots
-      $curr = new DateTime("$datestr 09:00:00");
-      $end = new DateTime("$datestr 20:00:00");
-
-      $availableTimes = [];
-      foreach ($aptmts as $aptmt) {
-        $aptmt_start = new DateTime($aptmt["start"]);
-        $aptmt_end = new DateTime($aptmt["end"]);
-
-        // Have a free block if there is time between now and appointment
-        if ($aptmt_start > $curr) {
-          array_push($availableTimes, [
-            "doctor" => $doctor,
-            "start" => $curr->format("H:i"),
-            "end" => $aptmt_start->format("H:i")
-          ]);
-        }
-
-        // Update next interval start time
-        if ($aptmt_end > $curr) {
-          $curr = $aptmt_end;
-        }
-      }
-
-      // Check if there is remaining time after lost appointment
-      if ($curr < $end) {
-        array_push($availableTimes, [
-          "doctor" => $doctor,
-          "start" => $curr->format("H:i"),
-          "end" => $end->format("H:i")
-        ]);
-      }
-
-      if (!empty($availableTimes)) {
-        $departmentAvailability[$doctor_name] = $availableTimes;
-      }
+    } else {
+      $departmentAvailability = $availableSlots;
     }
   }
 }
@@ -154,7 +179,7 @@ $conn->close();
       </div>
     </form>
   </div>
-<!-- 
+  <!-- 
   <table class="table">
     <tr>
       <th>Doctor</th>
@@ -175,12 +200,12 @@ $conn->close();
       <th>Doctor</th>
       <th>Times</th>
     </tr>
-    <?php foreach ($departmentAvailability as $doctor_name => $slots): ?>
+    <?php foreach ($departmentAvailability as $availability): ?>
       <tr>
-        <td><?= $doctor_name ?></td>
+        <td><?= $availability["doctor"] ?></td>
         <td>
-          <?php foreach ($slots as $slot): ?>
-            <?= $slot["start" ]?> - <?= $slot["end"]?><br>
+          <?php foreach ($availability["times"] as $slot): ?>
+            <?= $slot["start"] ?> - <?= $slot["end"] ?><br>
           <?php endforeach; ?>
         </td>
       </tr>
