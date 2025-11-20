@@ -42,6 +42,7 @@ function getAvailableSlots($conn, $department, $datestr): array
     if (!isset($doctor_schedules[$id])) {
       $doctor_schedules[$id] = [
         'name' => $row['doctor_name'],
+        'email' => $row['doctor_email'],
         'appointments' => []
       ];
     }
@@ -91,6 +92,7 @@ function getAvailableSlots($conn, $department, $datestr): array
     if (!empty($availableTimes)) {
       $departmentAvailability[] = [
         "doctor" => $doc_data["name"],
+        "email" => $doc_data["email"],
         "times" => $availableTimes
       ];
     }
@@ -132,7 +134,7 @@ if (isset($_POST['search_btn'])) {
     $availableSlots = getAvailableSlots($conn, $department, $datestr);
 
     if (count($availableSlots) == 0) {
-      $message = 'Invalid department';
+      $message = 'No available appointments for this department on this date';
     } else {
       $departmentAvailability = $availableSlots;
     }
@@ -154,7 +156,7 @@ $conn->close();
 
 <body>
   <?php if ($message != "") {
-    echo "<p>$message<p>";
+    echo "<p>$message</p>";
   } ?>
 
   <h1 class="header">Patient Portal - Query for Available Doctors</h1>
@@ -198,11 +200,13 @@ $conn->close();
   <table class="table">
     <tr>
       <th>Doctor</th>
+      <th>Email</th>
       <th>Times</th>
     </tr>
     <?php foreach ($departmentAvailability as $availability): ?>
       <tr>
         <td><?= $availability["doctor"] ?></td>
+        <td><?= $availability["email"]?></td>
         <td>
           <?php foreach ($availability["times"] as $slot): ?>
             <?= $slot["start"] ?> - <?= $slot["end"] ?><br>
