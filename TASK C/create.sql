@@ -40,3 +40,22 @@ CREATE TABLE Prescription(
     PRIMARY KEY (id),
 	FOREIGN KEY (appointment_id) REFERENCES appointment(id)
 )
+
+
+CREATE TABLE address_info (
+ id int auto_increment primary key,
+ country varchar(50),
+ zip_code varchar(15),
+ state_code varchar(10)
+);
+
+CREATE TABLE patients (
+ id int auto_increment primary key,
+ first_name varchar(50),
+ last_name varchar(50),
+ dob date,
+ phone varchar(20),
+ email varchar(100),
+ address_id int,
+ foreign key (address_id) references address_info(id)
+);
