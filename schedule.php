@@ -20,13 +20,13 @@ function getAvailableSlots($conn, $department, $datestr): array
   // Get appointments from doctors in the department
   $sql = "SELECT 
             doc.id as doctor_id, 
-            doc.email as doctor_email,
             CONCAT(doc.first_name, ' ', doc.last_name) as doctor_name,
             apt.start, apt.end
-          FROM doctor doc
-          JOIN department dpt on doc.department_id = dpt.id
-          LEFT JOIN appointment apt on doc.id = apt.doctor_id
-            AND apt.start BETWEEN '$datestr' AND DATE_ADD('$datestr', INTERVAL 24 HOUR)
+          FROM Doctor doc
+          JOIN Department dpt on doc.department_id = dpt.id
+          LEFT JOIN Appointment apt on doc.id = apt.doctor_id AND
+            apt.start >= '$datestr 09:00:00' AND 
+            apt.end <= '$datestr 20:00:00'
           WHERE 
             dpt.name = '$department'
           ORDER BY doc.id, apt.start";
@@ -42,7 +42,6 @@ function getAvailableSlots($conn, $department, $datestr): array
     if (!isset($doctor_schedules[$id])) {
       $doctor_schedules[$id] = [
         'name' => $row['doctor_name'],
-        'email' => $row['doctor_email'],
         'appointments' => []
       ];
     }
@@ -69,10 +68,10 @@ function getAvailableSlots($conn, $department, $datestr): array
 
       // Free block between now and next appointment
       if ($aptmt_start > $curr) {
-        array_push($availableTimes, [
+        $availableTimes[] = [
           "start" => $curr->format("H:i"),
           "end" => $aptmt_start->format("H:i")
-        ]);
+        ];
       }
 
       // Update next interval start time
@@ -81,18 +80,18 @@ function getAvailableSlots($conn, $department, $datestr): array
       }
     }
 
-    // Check if there is remaining time after lost appointment
+    // Check if there is remaining time after last appointment
     if ($curr < $end) {
-      array_push($availableTimes, [
+      $availableTimes[] = [
         "start" => $curr->format("H:i"),
         "end" => $end->format("H:i")
-      ]);
+      ];
     }
 
     if (!empty($availableTimes)) {
       $departmentAvailability[] = [
+        "id" => $doc_id,
         "doctor" => $doc_data["name"],
-        "email" => $doc_data["email"],
         "times" => $availableTimes
       ];
     }
@@ -129,14 +128,90 @@ if (isset($_POST['search_btn'])) {
     }
   }
 
+  // Validate it is an actual department
+  if ($message == '') {
+    $sql = "SELECT COUNT(*) as count FROM Department WHERE name = '$department'";
+    $result = $conn->query($sql);
+    $row = $result->fetch_assoc();
+
+    if ($row['count'] == 0) {
+      $message = 'Invalid department';
+    }
+  }
+
   // Query doctors in department
   if ($message == '') {
     $availableSlots = getAvailableSlots($conn, $department, $datestr);
 
     if (count($availableSlots) == 0) {
-      $message = 'No available appointments for this department on this date';
+      $message = 'No availability found';
     } else {
       $departmentAvailability = $availableSlots;
+    }
+  }
+}
+
+if (isset($_POST['schedule_btn'])) {
+  $doctor_id = trim($_POST['id']);
+  $datetime_str = trim($_POST['datetime']);
+  $message = '';
+
+  if ($doctor_id == '' || $datetime_str == '') {
+    $message = 'Please fill in all fields';
+  }
+
+  // Validate datetime and that it is within working hours
+  if ($message == '') {
+    $datetime_obj = DateTime::createFromFormat('Y-m-d\TH:i', $datetime_str);
+
+    // Check valid date time and within working hours
+    if ($datetime_obj === false || $datetime_obj->format('Y-m-d\TH:i') !== $datetime_str) {
+      $message = 'Enter a valid date and time';
+
+    } else if ($datetime_obj->format('H:i') < '09:00' || $datetime_obj->format('H:i') > '19:30') {
+      $message = 'Appointment time must be between working hours (09:00 - 20:00)';
+    }
+  }
+
+  // Validate it is an actual doctor id
+  if ($message == '') {
+    $sql = "SELECT COUNT(*) as count FROM Doctor WHERE id = '$doctor_id'";
+    $result = $conn->query($sql);
+    $row = $result->fetch_assoc();
+
+    if ($row['count'] == 0) {
+      $message = 'Invalid doctor ID';
+    }
+  }
+
+  // Check appointment availability
+  if ($message == '') {
+    // Get start and end datetime strings
+    $start_str = $datetime_obj->format('Y-m-d H:i:s');
+    $end_obj = clone $datetime_obj;
+    $end_obj->modify('+30 minutes');
+    $end_str = $end_obj->format('Y-m-d H:i:s');
+
+    $sql = "SELECT COUNT(*) as count from Appointment
+            WHERE doctor_id = '$doctor_id' 
+            AND start < '$end_str' AND end > '$start_str'";
+    $result = $conn->query($sql);
+    $row = $result->fetch_assoc();
+
+    if ($row["count"] > 0) {
+      $message = "This time slot is not available. Try a different time.";
+    }
+  }
+
+  // Schedule appointment
+  if ($message == '') {
+    $sql = "INSERT INTO Appointment (doctor_id, patient_id, start, end)
+            VALUES ('$doctor_id', '{$_SESSION['patient_id']}', '$start_str', '$end_str')";
+
+    if ($conn->query($sql) === TRUE) {
+      $message = 'Appointment scheduled successfully';
+    } else {
+      $message = 'Error scheduling appointment: ' . $conn->error;
     }
   }
 }
@@ -146,75 +221,99 @@ $conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Schedule Appointment</title>
+    <link rel="stylesheet" href="schedule_styles.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Schedule Appointment</title>
-  <link rel="stylesheet" href="schedule_styles.css" />
-</head>
+  <body>
+    <h1 class="header">Patient Portal - Query for Available Doctors</h1>
 
-<body>
-  <?php if ($message != "") {
-    echo "<p>$message</p>";
-  } ?>
+    <!-- <div class="message-container">
+      <p class="error-message">Error with something</p>
+    </div> -->
 
-  <h1 class="header">Patient Portal - Query for Available Doctors</h1>
+    <!-- Error Message -->
+    <?php if ($message != "") {
+      echo "<div class=\"message-container\">
+        <p class=\"error-message\">$message</p>
+      </div>";
+    } ?>
 
-  <div class="form_container">
-    <!-- Schedule form -->
-    <form class="form" method="post">
-      <div class="form_body">
-        <h2 class="form_header">Schedule an Appointment</h2>
+    <div class="container">
+      <div class="left-top">
+        <!-- Schedule form -->
+        <form class="form" method="post">
+          <div class="form_body">
+            <h2 class="form_header">Search for Available Doctors</h2>
 
-        <div class="form_field_container">
-          <label for="department">Department:</label>
-          <input class="form_field" type="text" id="department" name="department" />
+            <div class="form_field_container">
+              <label for="department">Department:</label>
+              <input
+                class="form_field"
+                type="text"
+                id="department"
+                name="department"
+              />
 
-          <label for="datetime">Date:</label>
-          <input class="form_field" type="date" id="date" name="date" />
+              <label for="date">Date:</label>
+              <input class="form_field" type="date" id="date" name="date" />
 
-          <button class="form_button" type="submit" name="search_btn">
-            View Available Times
-          </button>
-        </div>
+              <button class="form_button" type="submit" name="search_btn">
+                View Available Times
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
-    </form>
-  </div>
-  <!-- 
-  <table class="table">
-    <tr>
-      <th>Doctor</th>
-      <th>Times</th>
-    </tr>
-    <tr>
-      <td>Joe Baloney</td>
-      <td>11:30-12:00pm</td>
-    </tr>
-    <tr>
-      <td>Joe Baloney</td>
-      <td>11:30-12:00pm <br> 10</td>
-    </tr>
-  </table> -->
+      <div class="left-bottom">
+        <form class="form" method="post">
+          <div class="form_body">
+            <h2 class="form_header">Schedule an Appointment</h2>
 
-  <table class="table">
-    <tr>
-      <th>Doctor</th>
-      <th>Email</th>
-      <th>Times</th>
-    </tr>
-    <?php foreach ($departmentAvailability as $availability): ?>
-      <tr>
-        <td><?= $availability["doctor"] ?></td>
-        <td><?= $availability["email"]?></td>
-        <td>
-          <?php foreach ($availability["times"] as $slot): ?>
-            <?= $slot["start"] ?> - <?= $slot["end"] ?><br>
+            <div class="form_field_container">
+              <label for="id">Doctor ID:</label>
+              <input
+                class="form_field"
+                type="text"
+                id="id"
+                name="id"
+              />
+
+              <label for="datetime">Date and Time:</label>
+              <input class="form_field" type="datetime-local" id="datetime" name="datetime" />
+              
+              <button class="form_button" type="submit" name="schedule_btn">
+                Schedule 30 min
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="right">
+        <table class="table">
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Times</th>
+          </tr>
+          <?php foreach ($departmentAvailability as $availability): ?>
+          <tr>
+            <td><?= $availability["id"] ?></td>
+            <td><?= $availability["doctor"] ?></td>
+            <td>
+              <?php foreach ($availability["times"] as $slot): ?>
+              <?= $slot["start"] ?>
+              -
+              <?= $slot["end"] ?><br />
+              <?php endforeach; ?>
+            </td>
+          </tr>
           <?php endforeach; ?>
-        </td>
-      </tr>
-    <?php endforeach; ?>
-  </table>
-</body>
-
+        </table>
+      </div>
+    </div>
+  </body>
 </html>
