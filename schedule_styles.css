@@ -90,13 +90,14 @@ body {
 
 .form_field {
   margin-top: 7px;
-  width: 96%;
-
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .form_button {
   margin-top: 15px;
-  width: 97%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 
