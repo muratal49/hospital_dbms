@@ -54,14 +54,13 @@ body {
 .form {
   width: 100%;
   height: 100%;
+  display: flex;
   background-color: lightgray;
 }
 
 .form_body {
   width: 80%;
-  height: 80%;
-  margin-left: auto;
-  margin-right: auto;
+  margin: auto;
 }
 
 .form_header {
@@ -91,7 +90,7 @@ body {
 
 .form_field {
   margin-top: 7px;
-  width: 95%;
+  width: 96%;
 
 }
 
