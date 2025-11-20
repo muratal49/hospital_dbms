@@ -43,19 +43,28 @@ CREATE TABLE Prescription(
 
 
 CREATE TABLE address_info (
- id int auto_increment primary key,
- country varchar(50),
- zip_code varchar(15),
- state_code varchar(10)
+    -- have two attributes: country, zip, state as primary key
+  ,
+ address_country varchar(50),
+ address_zip varchar(15),
+ address_state varchar(10)
+ primary key (address_country, address_zip)
 );
 
 CREATE TABLE patients (
+
  id int auto_increment primary key,
+ password varchar(50),
  first_name varchar(50),
  last_name varchar(50),
  dob date,
  phone varchar(20),
  email varchar(100),
- address_id int,
- foreign key (address_id) references address_info(id)
+ address_street varchar(100),
+ address_country varchar(50),
+ address_zip varchar(15),
+ insurance varchar(100),
+ pharmacy_address varchar(100),
+
+ foreign key (address_country, address_zip) references address_info(address_country, address_zip)
 );
