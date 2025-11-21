@@ -1,11 +1,11 @@
-CREATE TABLE Department(
+CREATE TABLE department(
     id INT AUTO_INCREMENT,
     name VARCHAR(32) NOT NULL UNIQUE,
     building VARCHAR(32) NOT NULL,
     PRIMARY KEY (id)
 )
 
-CREATE TABLE Doctor(
+CREATE TABLE doctor(
     id INT AUTO_INCREMENT,
     password VARCHAR(32) NOT NULL,
     first_name VARCHAR(32) NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE Doctor(
     FOREIGN KEY (department_id) REFERENCES Department(id)
 )
 
-CREATE TABLE AddressInfo (
+CREATE TABLE address_info (
     -- have two attributes: country, zip, state as primary key
     address_country varchar(50),
     address_zip varchar(15),
@@ -26,7 +26,7 @@ CREATE TABLE AddressInfo (
     primary key (address_country, address_zip)
 );
 
-CREATE TABLE Patient(
+CREATE TABLE patient(
     id int auto_increment primary key,
     password varchar(50),
     first_name varchar(50),
@@ -43,7 +43,7 @@ CREATE TABLE Patient(
     foreign key (address_country, address_zip) references address_info(address_country, address_zip)
 );
 
-CREATE TABLE Appointment(
+CREATE TABLE appointment(
     id INT AUTO_INCREMENT,
     start DATETIME NOT NULL,
     end DATETIME NOT NULL,
@@ -55,7 +55,7 @@ CREATE TABLE Appointment(
     FOREIGN KEY (doctor_id) REFERENCES Doctor(id)
 )
 
-CREATE TABLE Prescription(
+CREATE TABLE prescription(
 	id INT AUTO_INCREMENT,
 	name VARCHAR(64) NOT NULL,
 	dosage VARCHAR(16) NOT NULL,
