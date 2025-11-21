@@ -31,7 +31,7 @@ $sql = "SELECT
         WHERE 
           a.patient_id = '{$_SESSION['patient_id']}' AND
           a.start >= '$curr_datetime'
-        ORDER BY a.start DESC";
+        ORDER BY a.start ASC";
 $query = $conn->query($sql);
 $result_upcoming = $query->fetch_all(MYSQLI_ASSOC);
 
@@ -48,7 +48,7 @@ $sql = "SELECT
         WHERE 
           a.patient_id = '{$_SESSION['patient_id']}' AND
           a.start < '$curr_datetime'
-        ORDER BY a.start DESC";
+        ORDER BY a.start ASC";
 
 $query = $conn->query($sql);
 $result_prev = $query->fetch_all(MYSQLI_ASSOC);
