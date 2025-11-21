@@ -307,7 +307,7 @@ $conn->close();
               <?php foreach ($availability["times"] as $slot): ?>
               <?= $slot["start"] ?>
               -
-              <?= $slot["end"] ?><br />
+              <?= $slot["end"] ?><br/>
               <?php endforeach; ?>
             </td>
           </tr>
