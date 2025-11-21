@@ -22,9 +22,9 @@ function getAvailableSlots($conn, $department, $datestr): array
             doc.id as doctor_id, 
             CONCAT(doc.first_name, ' ', doc.last_name) as doctor_name,
             apt.start, apt.end
-          FROM Doctor doc
-          JOIN Department dpt on doc.department_id = dpt.id
-          LEFT JOIN Appointment apt on doc.id = apt.doctor_id AND
+          FROM doctor doc
+          JOIN department dpt on doc.department_id = dpt.id
+          LEFT JOIN appointment apt on doc.id = apt.doctor_id AND
             apt.start >= '$datestr 09:00:00' AND 
             apt.end <= '$datestr 20:00:00'
           WHERE 
@@ -130,7 +130,7 @@ if (isset($_POST['search_btn'])) {
 
   // Validate it is an actual department
   if ($message == '') {
-    $sql = "SELECT COUNT(*) as count FROM Department WHERE name = '$department'";
+    $sql = "SELECT COUNT(*) as count FROM department WHERE name = '$department'";
     $result = $conn->query($sql);
     $row = $result->fetch_assoc();
 
@@ -175,7 +175,7 @@ if (isset($_POST['schedule_btn'])) {
 
   // Validate it is an actual doctor id
   if ($message == '') {
-    $sql = "SELECT COUNT(*) as count FROM Doctor WHERE id = '$doctor_id'";
+    $sql = "SELECT COUNT(*) FROM doctor WHERE id = '$doctor_id'";
     $result = $conn->query($sql);
     $row = $result->fetch_assoc();
 
@@ -192,7 +192,7 @@ if (isset($_POST['schedule_btn'])) {
     $end_obj->modify('+30 minutes');
     $end_str = $end_obj->format('Y-m-d H:i:s');
 
-    $sql = "SELECT COUNT(*) as count from Appointment
+    $sql = "SELECT COUNT(*) from appointment
             WHERE doctor_id = '$doctor_id' 
             AND start < '$end_str' AND end > '$start_str'";
     $result = $conn->query($sql);
