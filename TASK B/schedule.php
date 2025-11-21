@@ -168,7 +168,7 @@ if (isset($_POST['schedule_btn'])) {
     if ($datetime_obj === false || $datetime_obj->format('Y-m-d\TH:i') !== $datetime_str) {
       $message = 'Enter a valid date and time';
 
-    } else if ($datetime_obj->format('H:i') < '09:00' || $datetime_obj->format('H:i') > '19:30') {
+    } else if ($datetime_obj->format('H:i') < '09:00' || $datetime_obj->format('H:i') > '20:00') {
       $message = 'Appointment time must be between working hours (09:00 - 20:00)';
     }
   }
@@ -205,7 +205,7 @@ if (isset($_POST['schedule_btn'])) {
 
   // Schedule appointment
   if ($message == '') {
-    $sql = "INSERT INTO Appointment (doctor_id, patient_id, start, end)
+    $sql = "INSERT INTO appointment (doctor_id, patient_id, start, end)
             VALUES ('$doctor_id', '{$_SESSION['patient_id']}', '$start_str', '$end_str')";
 
     if ($conn->query($sql) === TRUE) {
