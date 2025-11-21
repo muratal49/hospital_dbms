@@ -17,52 +17,107 @@ if (isset($_SESSION["doctor_id"])) {
   exit();
 }
 
-// Handle patient log in
+// Handle patient log in (secure)
 if (isset($_POST["patient_login_btn"])) {
   $email = $_POST["email"] ?? '';
   $password = $_POST["password"] ?? '';
 
-  // Basic form validation
   if ($email == '' || $password == '') {
     $message = 'EMAIL and password fields need to be filled out';
   } else {
-    // Check if the user exists
-    $sql = "SELECT id FROM patient WHERE email = '$email' AND password = '$password' LIMIT 1";
-    $result = $conn->query($sql);
+    $stmt = $conn->prepare("SELECT id, password FROM patient WHERE email = ? LIMIT 1");
+    if ($stmt) {
+      $stmt->bind_param('s', $email);
+      $stmt->execute();
+      $res = $stmt->get_result();
+      if ($res && $res->num_rows > 0) {
+        $row = $res->fetch_assoc();
+        $stored = $row['password'];
 
-    // User found
-    if ($result->num_rows > 0) {
-      $row = $result->fetch_assoc();
+        $ok = false;
+        // If password is hashed (bcrypt etc.), use password_verify
+        if (strpos($stored, '$2y$') === 0 || strpos($stored, '$2a$') === 0 || strpos($stored, '$argon2') === 0) {
+          if (password_verify($password, $stored)) {
+            $ok = true;
+          }
+        } else {
+          // Fallback: plaintext compare (for existing data). On success, rehash and store.
+          if ($password === $stored) {
+            $ok = true;
+            $newHash = password_hash($password, PASSWORD_DEFAULT);
+            $up = $conn->prepare("UPDATE patient SET password = ? WHERE id = ?");
+            if ($up) {
+              $up->bind_param('si', $newHash, $row['id']);
+              $up->execute();
+              $up->close();
+            }
+          }
+        }
 
-      $_SESSION["patient_id"] = $row["id"];
-      header('Location: dashboard.php');
-      exit();
+        if ($ok) {
+          $_SESSION["patient_id"] = $row["id"];
+          header('Location: dashboard.php');
+          exit();
+        } else {
+          $message = 'Incorrect username or password';
+        }
+      } else {
+        $message = 'Incorrect username or password';
+      }
+      $stmt->close();
     } else {
-      $message = 'Incorrect username or password';
+      $message = 'Database error';
     }
   }
 }
-// Handle caregiver
+// Handle caregiver (doctor) login (secure)
 if (isset($_POST["caregiver_login_btn"])) {
   $email = $_POST["email"] ?? '';
   $password = $_POST["password"] ?? '';
 
-  // Basic form validation
   if ($email == '' || $password == '') {
     $message = 'EMAIL and password fields need to be filled out';
   } else {
-    // Check if the user exists
-    $sql = "SELECT id FROM doctor WHERE email = '$email' AND password = '$password' LIMIT 1";
-    $result = $conn->query($sql);
+    $stmt = $conn->prepare("SELECT id, password FROM doctor WHERE email = ? LIMIT 1");
+    if ($stmt) {
+      $stmt->bind_param('s', $email);
+      $stmt->execute();
+      $res = $stmt->get_result();
+      if ($res && $res->num_rows > 0) {
+        $row = $res->fetch_assoc();
+        $stored = $row['password'];
 
-    if ($result->num_rows > 0) {
-      $row = $result->fetch_assoc();
+        $ok = false;
+        if (strpos($stored, '$2y$') === 0 || strpos($stored, '$2a$') === 0 || strpos($stored, '$argon2') === 0) {
+          if (password_verify($password, $stored)) {
+            $ok = true;
+          }
+        } else {
+          if ($password === $stored) {
+            $ok = true;
+            $newHash = password_hash($password, PASSWORD_DEFAULT);
+            $up = $conn->prepare("UPDATE doctor SET password = ? WHERE id = ?");
+            if ($up) {
+              $up->bind_param('si', $newHash, $row['id']);
+              $up->execute();
+              $up->close();
+            }
+          }
+        }
 
-      $_SESSION["doctor_id"] = $row["id"];
-      header('Location: dashboard.php');
-      exit();
+        if ($ok) {
+          $_SESSION["doctor_id"] = $row["id"];
+          header('Location: dashboard.php');
+          exit();
+        } else {
+          $message = 'Incorrect username or password';
+        }
+      } else {
+        $message = 'Incorrect username or password';
+      }
+      $stmt->close();
     } else {
-      $message = 'Incorrect username or password';
+      $message = 'Database error';
     }
   }
 }

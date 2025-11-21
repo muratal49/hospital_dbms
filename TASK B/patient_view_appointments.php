@@ -15,36 +15,44 @@ if (!isset($_SESSION["patient_id"])) {
 // Get current date time
 $curr_datetime = date('Y-m-d H:i:s');
 
-// Get upcoming appointments
-$sql = "SELECT 
-          CONCAT(d.first_name,' ', d.last_name) AS doctor,
-          a.start
-        FROM appointment a
-        JOIN doctor d ON a.doctor_id = d.id
-        WHERE 
-          a.patient_id = '{$_SESSION['patient_id']}' AND
-          a.start >= '$curr_datetime'
-        ORDER BY a.start ASC";
-$query = $conn->query($sql);
-$result_upcoming = $query->fetch_all(MYSQLI_ASSOC);
+// Get upcoming appointments (prepared)
+$up_stmt = $conn->prepare(
+  "SELECT CONCAT(d.first_name,' ', d.last_name) AS doctor, a.start
+   FROM appointment a
+   JOIN doctor d ON a.doctor_id = d.id
+   WHERE a.patient_id = ? AND a.start >= ?
+   ORDER BY a.start ASC"
+);
+$result_upcoming = [];
+if ($up_stmt) {
+  $pid = $_SESSION['patient_id'];
+  $up_stmt->bind_param('is', $pid, $curr_datetime);
+  if ($up_stmt->execute()) {
+    $res_up = $up_stmt->get_result();
+    $result_upcoming = $res_up->fetch_all(MYSQLI_ASSOC);
+  }
+  $up_stmt->close();
+}
 
-// Get previous appointments
-$sql = "SELECT 
-          a.id,
-          CONCAT(d.first_name,' ', d.last_name) AS doctor, 
-          a.start, 
-          CONCAT(p.name, ' ', p.dosage) AS prescription,
-          a.notes
-        FROM appointment a
-        JOIN doctor d ON a.doctor_id = d.id
-        LEFT JOIN prescription p ON a.id = p.appointment_id
-        WHERE 
-          a.patient_id = '{$_SESSION['patient_id']}' AND
-          a.start < '$curr_datetime'
-        ORDER BY a.start ASC";
-
-$query = $conn->query($sql);
-$result_prev = $query->fetch_all(MYSQLI_ASSOC);
+// Get previous appointments (prepared)
+$prev_stmt = $conn->prepare(
+  "SELECT a.id, CONCAT(d.first_name,' ', d.last_name) AS doctor, a.start, CONCAT(p.name, ' ', p.dosage) AS prescription, a.notes
+   FROM appointment a
+   JOIN doctor d ON a.doctor_id = d.id
+   LEFT JOIN prescription p ON a.id = p.appointment_id
+   WHERE a.patient_id = ? AND a.start < ?
+   ORDER BY a.start ASC"
+);
+$result_prev = [];
+if ($prev_stmt) {
+  $pid = $_SESSION['patient_id'];
+  $prev_stmt->bind_param('is', $pid, $curr_datetime);
+  if ($prev_stmt->execute()) {
+    $res_prev = $prev_stmt->get_result();
+    $result_prev = $res_prev->fetch_all(MYSQLI_ASSOC);
+  }
+  $prev_stmt->close();
+}
 
 // Format previous appointments to group prescriptions
 $prev_aptmt_groups = [];
