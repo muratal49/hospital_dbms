@@ -60,6 +60,7 @@ CREATE TABLE prescription(
 	name VARCHAR(64) NOT NULL,
 	dosage VARCHAR(16) NOT NULL,
 	expiration DATETIME NOT NULL,
+    appointment_id INT NOT NULL,
     PRIMARY KEY (id),
 	FOREIGN KEY (appointment_id) REFERENCES appointment(id)
 )
