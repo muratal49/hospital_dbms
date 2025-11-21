@@ -1,17 +1,10 @@
 <?php
 session_start();
 
-$servername = "localhost";
-$username = "ezhupa"; // use your own username
-$password = "...";    // use your own password
-$dbname = "ezhupa_1"; // use your own database name
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+require_once 'db_config.php';
 
-// Check connection
-if ($conn->connect_error) {
-  die("Connection failed: " . $conn->connect_error);
-}
+
+$conn = getConnection();
 
 // Redirect if already logged in
 if (!isset($_SESSION["patient_id"])) {
