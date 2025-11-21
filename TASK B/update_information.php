@@ -36,7 +36,7 @@ if (isset($_POST["update_info_btn"])) {
   $result = $conn->query($sql);
 
   $row = $result->fetch_assoc();
-  
+
   $session_dob = $row['dob'];
   $session_first_name = $row['first_name'];
   $session_last_name = $row['last_name'];
@@ -50,11 +50,11 @@ if (isset($_POST["update_info_btn"])) {
   }
 
   if ($message != '') {
-  $update = $conn->prepare("UPDATE patient SET phone = ?, email = ?, home_address = ?, pharmacy_address = ? WHERE id = ?");
+    $update = $conn->prepare("UPDATE patient SET phone = ?, email = ?, home_address = ?, pharmacy_address = ? WHERE id = ?");
 
-  $update->bind_param("ssssi", $phone, $email, $home_address, $pharmacy_address, $SESSION["patient_id"]);
+    $update->bind_param("ssssi", $phone, $email, $home_address, $pharmacy_address, $SESSION["patient_id"]);
 
-  $update->execute();
+    $update->execute();
   }
 }
 $conn->close();
@@ -62,45 +62,48 @@ $conn->close();
 
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Login</title>
-		<link rel="stylesheet" href="styles.css" />
-	</head>
-	<body>
-		<h1 class="header">Patient Portal - Update My Information</h1>
 
-    <!-- Error Message -->
-    <?php if ($message != "") {
-      echo "<div class=\"message-container\">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <h1 class="header">Patient Portal - Update My Information</h1>
+
+  <!-- Error Message -->
+  <?php if ($message != "") {
+    echo "<div class=\"message-container\">
         <p class=\"error-message\">$message</p>
       </div>";
-    } ?>
+  } ?>
 
-		<div class="form_container">
-			<form class="/submit" method="post">
-				<div class="form_body">
-     					<h2 class="form_header">Patient update information</h2>
+  <div class="form_container">
+    <form class="/submit" method="post">
+      <div class="form_body">
+        <h2 class="form_header">Patient update information</h2>
 
-					<div class="form_field_container">
+        <div class="form_field_container">
 
-						<label for="phone">Phone number:</label>
-						<input type="tel" id="phone" name="phone"><br><br>
+          <label for="phone">Phone number:</label>
+          <input type="tel" id="phone" name="phone"><br><br>
 
-						<label for="email">Email address:</label>
-						<input type="email" id="email" name="email"><br><br>
+          <label for="email">Email address:</label>
+          <input type="email" id="email" name="email"><br><br>
 
-						<label for="home_address">Home address:</label>
-						<input type="text" id="home_address" name="home_address"><br><br>
+          <label for="home_address">Home address:</label>
+          <input type="text" id="home_address" name="home_address"><br><br>
 
-						<label for="pharmacy_address">Pharmacy address:</label>
-						<input type="text" id="pharmacy_address" name="pharmacy_address"><br><br>
+          <label for="pharmacy_address">Pharmacy address:</label>
+          <input type="text" id="pharmacy_address" name="pharmacy_address"><br><br>
 
-						<button type="submit" name="update_info_btn">Update</button>
-					</div>
-				</div>
-			</form>
-		</div>
-	</body>
+          <button type="submit" name="update_info_btn">Update</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</body>
+
 </html>

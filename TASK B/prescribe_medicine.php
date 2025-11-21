@@ -21,8 +21,11 @@ if (!isset($_SESSION["doctor_id"])) {
   exit();
 }
 
+$now = date('Y-m-d H:i:s');
+$id = $_SESSION["doctor_id"];
+
 // identify the patient the doctor is currently in appointment with
-$find_appointment = $conn->query("SELECT id, patient_id FROM appointment WHERE start < $now AND end > $now AND doctor_id == $id");
+$find_appointment = $conn->query("SELECT id, patient_id FROM appointment WHERE start < '$now' AND end > '$now' AND doctor_id = $id");
 if ($find_appointment->num_rows == 0) {
 
   // case where the caregiver is not in an appointment - no medicine can be prescribed!
@@ -36,19 +39,17 @@ if ($find_appointment->num_rows == 0) {
   $appointment_id = $row['id'];
   $patient_id = $row['patient_id'];
 
-  $find_patient = $conn->query("SELECT first_name, last_name FROM patient WHERE id == $patient_id");
+  $find_patient = $conn->query("SELECT first_name, last_name FROM patient WHERE id = $patient_id");
   $row = $find_patient->fetch_assoc();
   $patient_first = $row['first_name'];
   $patient_last = $row['last_name'];
-  $patient = $patient_first . $patient_last;
+  $patient = $patient_first . ' ' . $patient_last;
 
   if (isset($_POST["prescribe_btn"])) {
     $medicine = $_POST["medicine"] ?? '';
     $dosage = $_POST["dosage"] ?? '';
     $expiration_date = $_POST["expiration_date"];
     $pharmacy = $_POST["pharmacy"] ?? '';
-    $id = $_SESSION["doctor_id"];
-    $now = date();
 
     // validate text inputs
     if ($medicine == '' || $dosage == '' || $pharmacy == '') {
@@ -60,10 +61,10 @@ if ($find_appointment->num_rows == 0) {
       $message = 'The expiration date cannot be in the past.';
     }
 
-    if ($message != '') {
-      $update = $conn->prepare("INSERT INTO prescription(name, dosage, expiration, appointment_id) VALUES ($medicine, $dosage, $expiration, $appointment_id");
+    if ($message == '') {
+      $update = $conn->prepare("INSERT INTO prescription(name, dosage, expiration, appointment_id, pharmacy) VALUES (?, ?, ?, ?, ?)");
 
-      $update->bind_param("ssii", $medicine, $dosage, $expiration, $appointment_id);
+      $update->bind_param("sssis", $medicine, $dosage, $expiration_date, $appointment_id, $pharmacy);
 
       $update->execute();
     }
