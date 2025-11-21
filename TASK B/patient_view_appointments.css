@@ -1,0 +1,75 @@
+body {
+  background-color: rgb(89, 140, 234);
+}
+
+.message-container {
+  text-align: center;
+}
+
+.error-message {
+  display: inline-block;
+  color: red;
+  padding: 5px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: lightcoral;
+  border: 2px solid black;
+}
+
+
+.header {
+  text-align: center;
+  margin: 30px;
+  color: white
+}
+
+.container-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 2fr 3fr;
+  height: 80vh;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  gap: 10px;
+}
+
+.top {
+  grid-column: 1;
+  grid-row: 1;
+  width: 100%;
+  border: 2px solid;
+  background-color: lightgray;
+}
+
+.bottom {
+  grid-column: 1;
+  grid-row: 2;
+  border: 2px solid;
+  background-color: lightgray;
+}
+
+.top-header {
+  text-align: center;
+  margin: 10px;
+}
+
+table, th, td {
+  border-collapse: collapse;
+  text-align: center;
+}
+
+th, td {
+  border: 1px solid black;
+  width: 50%;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.scrollable {
+  width: 100%;
+  overflow-y: auto;
+}

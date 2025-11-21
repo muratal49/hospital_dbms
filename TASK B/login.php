@@ -38,6 +38,7 @@ if (isset($_POST["patient_login_btn"])) {
     $sql = "SELECT id FROM patient WHERE email = '$email' AND password = '$password' LIMIT 1";
     $result = $conn->query($sql);
 
+    // User found
     if ($result->num_rows > 0) {
       $row = $result->fetch_assoc();
 
