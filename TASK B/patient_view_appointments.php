@@ -85,11 +85,11 @@ $conn->close();
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>View Appointments</title>
-  <link rel="stylesheet" href="view_appointments.css" />
+  <link rel="stylesheet" href="patient_view_appointments.css" />
 </head>
 
 <body>
-  <h1 class="header">Health Access - Log In</h1>
+  <h1 class="header">Patient Portal - View Appointments</h1>
   <div class="container-grid">
     <div class="top">
       <h4 class="top-header">Upcoming Appointments</h4>

@@ -3,7 +3,7 @@ CREATE TABLE department(
     name VARCHAR(32) NOT NULL UNIQUE,
     building VARCHAR(32) NOT NULL,
     PRIMARY KEY (id)
-)
+);
 
 CREATE TABLE doctor(
     id INT AUTO_INCREMENT,
@@ -16,7 +16,7 @@ CREATE TABLE doctor(
     is_active BOOL NOT NULL DEFAULT 1,
     PRIMARY KEY (id),
     FOREIGN KEY (department_id) REFERENCES department(id)
-)
+);
 
 CREATE TABLE address_info (
     -- have two attributes: country, zip, state as primary key
@@ -53,7 +53,7 @@ CREATE TABLE appointment(
     PRIMARY KEY (id),
     FOREIGN KEY (patient_id) REFERENCES patient(id),
     FOREIGN KEY (doctor_id) REFERENCES doctor(id)
-)
+);
 
 CREATE TABLE prescription(
 	id INT AUTO_INCREMENT,
@@ -63,4 +63,4 @@ CREATE TABLE prescription(
     appointment_id INT NOT NULL,
     PRIMARY KEY (id),
 	FOREIGN KEY (appointment_id) REFERENCES appointment(id)
-)
+);

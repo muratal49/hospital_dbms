@@ -109,7 +109,7 @@ $conn->close();
             <label for="patient-email">Email:</label>
             <input
               class="form_field"
-              type="text"
+              type="password"
               id="patient-email"
               name="email"
             />
@@ -117,7 +117,7 @@ $conn->close();
             <label for="patient-password">Password:</label>
             <input
               class="form_field"
-              type="text"
+              type="password"
               id="patient-password"
               name="password"
             />
