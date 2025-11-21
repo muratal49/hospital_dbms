@@ -15,7 +15,7 @@ CREATE TABLE doctor(
     department_id INT,
     is_active BOOL NOT NULL DEFAULT 1,
     PRIMARY KEY (id),
-    FOREIGN KEY (department_id) REFERENCES Department(id)
+    FOREIGN KEY (department_id) REFERENCES department(id)
 )
 
 CREATE TABLE address_info (
@@ -51,8 +51,8 @@ CREATE TABLE appointment(
     patient_id INT NOT NULL,
     doctor_id INT NOT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (patient_id) REFERENCES Patient(id),
-    FOREIGN KEY (doctor_id) REFERENCES Doctor(id)
+    FOREIGN KEY (patient_id) REFERENCES patient(id),
+    FOREIGN KEY (doctor_id) REFERENCES doctor(id)
 )
 
 CREATE TABLE prescription(
