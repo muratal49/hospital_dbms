@@ -1,0 +1,91 @@
+body {
+  margin: 0;
+  padding: 20px;
+  background-color: rgb(89, 140, 234);
+  font-family: Arial, sans-serif;
+}
+
+.header {
+  text-align: center;
+  margin: 30px;
+  color: white;
+  font-size: 28px;
+}
+
+.card {
+  border: 2px solid #ccc;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  background-color: #f7f7f7;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  clear: both;
+}
+
+.card h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.card p {
+  margin: 8px 0;
+  font-size: 16px;
+}
+
+.card p strong {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.card a {
+  color: #4a90e2;
+  text-decoration: none;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+th {
+  background-color: #e0e0e0;
+  font-weight: bold;
+}
+
+td {
+  background-color: white;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #f7c4c4;
+  border: 1px solid #c99;
+  border-radius: 5px;
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+  margin-left: 10px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.back-link:hover {
+  background-color: #f5b3b3;
+}
+
+.no-data {
+  color: #666;
+  font-style: italic;
+}

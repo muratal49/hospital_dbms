@@ -11,11 +11,12 @@ if (!isset($_SESSION['doctor_id'])) {
   exit();
 }
 
-$patient_id = isset($_GET['checked_in_patient_id']) ? intval($_GET['checked_in_patient_id']) : 0;
-if ($patient_id <= 0) {
-  echo 'Invalid patient id';
+if (!isset($_SESSION['checked_in_patient_id'])) {
+  header('Location: caregiver_patient_checkin.php');
   exit();
 }
+
+$patient_id = isset($_SESSION['checked_in_patient_id']) ? intval($_SESSION['checked_in_patient_id']) : 0;
 
 // Fetch patient basic info
 $stmt = $conn->prepare("SELECT id, first_name, last_name, dob, phone, email FROM patient WHERE id = ? LIMIT 1");
@@ -78,16 +79,11 @@ $history = array_values($patient_history);
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="view_patient_history.css" />
   <title>View Patient History</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    .card { border: 1px solid #ddd; padding: 12px; margin-bottom: 12px; border-radius: 6px; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 8px; border: 1px solid #ccc; text-align: left; }
-  </style>
 </head>
 <body>
-  <h1>Patient History (Doctor View)</h1>
+  <h1 class="header">Patient History (Doctor View)</h1>
   <div class="card">
     <h2>Patient</h2>
     <p><strong>Name:</strong> <?= htmlspecialchars($patient['first_name'] . ' ' . $patient['last_name']) ?></p>
@@ -133,7 +129,7 @@ $history = array_values($patient_history);
   </div>
 
   <div>
-    <a href="javascript:history.back()">Back</a>
+    <a href="caregiver_patient_checkin.php">Back</a>
   </div>
 </body>
 </html>

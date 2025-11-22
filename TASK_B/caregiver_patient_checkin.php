@@ -48,58 +48,10 @@ if (isset($_POST["caregiver_checkin_btn"])) {
           if ($result && $result->num_rows > 0) {
             $row = $result->fetch_assoc();
 
-            // Store patient id and basic info in session for later use
+
+            // Redirect caregiver to 
+            header('Location: view_patient_history.php');
             $_SESSION["checked_in_patient_id"] = $row["id"];
-            $_SESSION["patient_info"] = [
-              'id' => $row['id'],
-              'first_name' => $row['first_name'],
-              'last_name' => $row['last_name'],
-              'dob' => $row['dob'],
-              'phone' => $row['phone'] ?? null,
-              'email' => $row['email'],
-            ];
-
-            // Retrieve past appointments and prescriptions for this patient
-            $curr_datetime = date('Y-m-d H:i:s');
-            $hist_stmt = $conn->prepare(
-              "SELECT a.id, a.start, a.notes, CONCAT(d.first_name, ' ', d.last_name) AS doctor, CONCAT(p.name, ' ', p.dosage) AS prescription
-               FROM appointment a
-               JOIN doctor d ON a.doctor_id = d.id
-               LEFT JOIN prescription p ON a.id = p.appointment_id
-               WHERE a.patient_id = ? AND a.start < ?
-               ORDER BY a.start DESC"
-            );
-
-            $patient_history = [];
-            if ($hist_stmt !== false) {
-              $hist_stmt->bind_param('is', $row['id'], $curr_datetime);
-              if ($hist_stmt->execute()) {
-                $hist_res = $hist_stmt->get_result();
-                while ($h = $hist_res->fetch_assoc()) {
-                  $aid = $h['id'];
-                  if (!isset($patient_history[$aid])) {
-                    $patient_history[$aid] = [
-                      'id' => $aid,
-                      'doctor' => $h['doctor'],
-                      'start' => $h['start'],
-                      'notes' => $h['notes'],
-                      'prescriptions' => []
-                    ];
-                  }
-
-                  if (!empty($h['prescription'])) {
-                    $patient_history[$aid]['prescriptions'][] = $h['prescription'];
-                  }
-                }
-              }
-              $hist_stmt->close();
-            }
-
-            // Store history (re-index to numeric array) in session
-            $_SESSION['patient_history'] = array_values($patient_history);
-
-            // Redirect caregiver to caregiver-specific dashboard
-            header('Location: caregiver_checkin_dashboard.php');
             exit();
           } else {
             $message = 'No matching patient found';
