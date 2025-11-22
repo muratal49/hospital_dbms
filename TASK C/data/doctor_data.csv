@@ -1,7 +1,3 @@
--- Nathanael Kumar - Work for CSC 261 Group 3, Milestone 3 - November 15, 2025
-
-$ cd import-csv
-$ cat doctor_data.csv 
 id, password, first_name, last_name, phone, email, department_id, is_active
 0, d_pw_01, Emma, Xu, 555-398-4072, em94@example.com, 3, 1
 1, d_pw_02, Liam, Patel, 555-284-1129, lp@example.com, 2, 1
