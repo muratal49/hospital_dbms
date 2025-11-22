@@ -33,7 +33,7 @@ CREATE TABLE patient(
     last_name varchar(50),
     dob date,
     phone varchar(20) UNIQUE,
-    email varchar(100),
+    email varchar(100) UNIQUE,
     address_street varchar(100),
     address_country varchar(50),
     address_zip varchar(15),

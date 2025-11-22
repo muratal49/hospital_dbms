@@ -57,7 +57,7 @@ if (isset($_POST["update_info_btn"])) {
   $session_first_name = $row['first_name'];
   $session_last_name = $row['last_name'];
 
-  $sql2 = "SELECT * FROM patient WHERE id != '$id' AND dob = '$session_dob' AND first_name = '$session_first_name' AND last_name = '$session_last_name' AND email = '$email'";
+  $sql2 = "SELECT * FROM patient WHERE id != '$id' AND email = '$email'";
   $result2 = $conn->query($sql2);
 
   if ($result2->num_rows > 0) {
