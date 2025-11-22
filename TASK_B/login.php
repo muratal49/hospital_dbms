@@ -138,7 +138,7 @@ $conn->close();
             <label for="caregiver-password">Password:</label>
             <input
               class="form_field"
-              type="text"
+              type="password"
               id="caregiver-password"
               name="password"
             />
