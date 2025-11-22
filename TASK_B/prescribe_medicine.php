@@ -53,8 +53,8 @@ if ($find_appointment->num_rows == 0) {
     }
 
     if ($message == '') {
-      $update = $conn->prepare("INSERT INTO prescription(name, dosage, expiration, appointment_id) VALUES ('$medicine', '$dosage', '$expiration_date', $appointment_id)");
-
+      $update = $conn->prepare("INSERT INTO prescription(name, dosage, expiration, appointment_id) VALUES (?, ?, ?, ?)");
+      $update->bind_param("sssi", $medicine, $dosage, $expiration_date, $appointment_id);
       $update->execute();
     }
   }
