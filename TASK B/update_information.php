@@ -52,7 +52,7 @@ if (isset($_POST["update_info_btn"])) {
   if ($message != '') {
     $update = $conn->prepare("UPDATE patient SET phone = ?, email = ?, home_address = ?, pharmacy_address = ? WHERE id = ?");
 
-    $update->bind_param("ssssi", $phone, $email, $home_address, $pharmacy_address, $SESSION["patient_id"]);
+    $update->bind_param("ssssi", $phone, $email, $home_address, $pharmacy_address, $_SESSION["patient_id"]);
 
     $update->execute();
   }

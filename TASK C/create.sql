@@ -52,9 +52,9 @@ CREATE TABLE appointment(
     doctor_id INT NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (patient_id) REFERENCES patient(id),
-    FOREIGN KEY (doctor_id) REFERENCES doctor(id)
-    UNIQUE KEY unique_doctor_time (doctor_id, start, end)
-    UNIQUE KEY unique_patient_time (patient_id, start, end)
+    FOREIGN KEY (doctor_id) REFERENCES doctor(id),
+    UNIQUE KEY unique_doctor_time (doctor_id, start, end),
+    UNIQUE KEY unique_patient_time (patient_id, start, end),
     CHECK (end > start)
 );
 
