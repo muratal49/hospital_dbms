@@ -55,7 +55,7 @@ if ($find_appointment->num_rows == 0) {
     $expiration_date = $_POST["expiration_date"];
 
     // validate text inputs
-    if ($medicine == '' || $dosage == '') {
+    if ($medicine == '' || $dosage == '' || $expiration_date == '') {
       $message = 'All fields must be filled out!';
     }
 
