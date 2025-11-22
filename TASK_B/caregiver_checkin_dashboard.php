@@ -1,11 +1,14 @@
 <?php
 session_start();
 
-// DONT DELTETE - BREAKS STUFF FOR SOME REASON
+
 require_once 'db_config.php';
 
-
-$conn = getConnection();
+// Make sure they're a doctor
+if (!isset($_SESSION['doctor_id'])) {
+  header('Location: login.php');
+  exit();
+}
 
 // Ensure patient selected
 if (!isset($_SESSION['checked_in_patient_id']) || !isset($_SESSION['patient_info'])) {
@@ -15,63 +18,58 @@ if (!isset($_SESSION['checked_in_patient_id']) || !isset($_SESSION['patient_info
 
 $patient = $_SESSION['patient_info'];
 $history = $_SESSION['patient_history'] ?? [];
+$conn = getConnection();
+
+// Get doctor name
+$doc_name = '';
+$dstmt = $conn->prepare('SELECT first_name, last_name FROM doctor WHERE id = ? LIMIT 1');
+if ($dstmt) {
+  $dstmt->bind_param('i', $_SESSION['doctor_id']);
+  $dstmt->execute();
+  $dres = $dstmt->get_result();
+  if ($dres && $dres->num_rows) {
+    $drow = $dres->fetch_assoc();
+    $doc_name = $drow['first_name'] . ' ' . $drow['last_name'];
+  }
+}
+
+// Get doctor data
+$pname = '';
+$pstmt = $conn->prepare('SELECT first_name, last_name FROM patient WHERE id = ? LIMIT 1');
+if ($pstmt) {
+  $pstmt->bind_param('i', $_SESSION['checked_in_patient_id']);
+  $pstmt->execute();
+  $pres = $pstmt->get_result();
+  if ($pres && $pres->num_rows) {
+    $prow = $pres->fetch_assoc();
+    $pname = $prow['first_name'] . ' ' . $prow['last_name'];
+  }
+}
+
+$conn->close();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Caregiver Dashboard</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    .card { border: 1px solid #ddd; padding: 12px; margin-bottom: 12px; border-radius: 6px; }
-    .header { margin-bottom: 16px; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 8px; border: 1px solid #ccc; text-align: left; }
+    body { font-family: Arial, sans-serif; padding: 20px;}
+    .card { border: 1px solid #ddd; padding: 12px; margin-bottom: 12px; border-radius: 6px;}
+    .header { margin-bottom: 16px;}
+    table { width: 100%; border-collapse: collapse;}
+    th,td { padding: 8px; border: 1px solid #ccc; text-align: left;}
   </style>
 </head>
+
 <body>
   <h1 class="header">Caregiver Dashboard</h1>
 
   <div style="float:right;">
-    <?php if (isset($_SESSION['doctor_id'])): ?>
-      <?php
-        // show doctor name
-        $doc_name = '';
-        $dbc = getConnection();
-        $dstmt = $dbc->prepare('SELECT first_name, last_name FROM doctor WHERE id = ? LIMIT 1');
-        if ($dstmt) {
-          $dstmt->bind_param('i', $_SESSION['doctor_id']);
-          $dstmt->execute();
-          $dres = $dstmt->get_result();
-          if ($dres && $dres->num_rows) {
-            $drow = $dres->fetch_assoc();
-            $doc_name = $drow['first_name'] . ' ' . $drow['last_name'];
-          }
-          $dstmt->close();
-        }
-        $dbc->close();
-      ?>
-      <div><strong>Doctor:</strong> <?= htmlspecialchars($doc_name) ?> | <a href="dashboard.php?logout=1">Logout</a></div>
-    <?php elseif (isset($_SESSION['checked_in_patient_id'])): ?>
-      <?php
-        $pname = '';
-        $dbc = getConnection();
-        $pstmt = $dbc->prepare('SELECT first_name, last_name FROM patient WHERE id = ? LIMIT 1');
-        if ($pstmt) {
-          $pstmt->bind_param('i', $_SESSION['checked_in_patient_id']);
-          $pstmt->execute();
-          $pres = $pstmt->get_result();
-          if ($pres && $pres->num_rows) {
-            $prow = $pres->fetch_assoc();
-            $pname = $prow['first_name'] . ' ' . $prow['last_name'];
-          }
-          $pstmt->close();
-        }
-        $dbc->close();
-      ?>
-      <div><strong>Patient:</strong> <?= htmlspecialchars($pname) ?> | <a href="dashboard.php?logout=1">Logout</a></div>
-    <?php endif; ?>
+    <div><strong>Doctor:</strong> <?= htmlspecialchars($doc_name) ?> | <a href="dashboard.php?logout=1">Logout</a></div>
   </div>
 
   <div class="card">
@@ -80,13 +78,10 @@ $history = $_SESSION['patient_history'] ?? [];
     <p><strong>DOB:</strong> <?= htmlspecialchars($patient['dob']) ?></p>
     <p><strong>Email:</strong> <?= htmlspecialchars($patient['email'] ?? '') ?></p>
     <p><strong>Phone:</strong> <?= htmlspecialchars($patient['phone'] ?? '') ?></p>
-    <?php if (isset($_SESSION['doctor_id'])): ?>
-      <p>
-        <a href="view_patient_history.php?checked_in_patient_id=<?= urlencode($patient['id']) ?>">View full history (doctor view)</a>
-      </p>
-    <?php else: ?>
-      <p><em>Doctor-only view available — <a href="login.php">log in as a doctor</a> to access full history.</em></p>
-    <?php endif; ?>
+    <p>
+      <a href="view_patient_history.php?checked_in_patient_id=<?= urlencode($patient['id']) ?>">View full history
+        (doctor view)</a>
+    </p>
   </div>
 
   <div class="card">
@@ -129,4 +124,5 @@ $history = $_SESSION['patient_history'] ?? [];
     <a href="caregiver_patient_checkin.php">Back to check-in</a>
   </div>
 </body>
+
 </html>
