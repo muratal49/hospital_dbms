@@ -43,4 +43,4 @@ FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS
-(name, dosage, expiration, appointment_id);
+(id, name, dosage, expiration, appointment_id);
