@@ -79,7 +79,7 @@ if (isset($_POST['schedule_btn'])) {
     else if ($datetime_obj < new DateTime("today")) {
       $message = 'Appointment time must be in the future';
     }
-    
+
     // Check working hours
     else if ($datetime_obj->format('H:i') < '09:00' || $datetime_obj->format('H:i') > '20:00') {
       $message = 'Appointment time must be between working hours (09:00 - 20:00)';
@@ -135,85 +135,78 @@ $conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Schedule Appointment</title>
-    <link rel="stylesheet" href="schedule_styles.css" />
-  </head>
 
-  <body>
-    <h1 class="header">Patient Portal - Query for Available Doctors</h1>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Schedule Appointment</title>
+  <link rel="stylesheet" href="schedule_styles.css" />
+</head>
 
-    <!-- <div class="message-container">
+<body>
+  <h1 class="header">Patient Portal - Query for Available Doctors</h1>
+
+  <!-- <div class="message-container">
       <p class="error-message">Error with something</p>
     </div> -->
 
-    <!-- Error Message -->
-    <?php if ($message != "") {
-      echo "<div class=\"message-container\">
+  <!-- Error Message -->
+  <?php if ($message != "") {
+    echo "<div class=\"message-container\">
         <p class=\"error-message\">$message</p>
       </div>";
-    } ?>
+  } ?>
 
-    <div class="container">
-      <div class="left-top">
-        <!-- Schedule form -->
-        <form class="form" method="post">
-          <div class="form_body">
-            <h2 class="form_header">Search for Available Doctors</h2>
+  <div class="container">
+    <div class="left-top">
+      <!-- Schedule form -->
+      <form class="form" method="post">
+        <div class="form_body">
+          <h2 class="form_header">Search for Available Doctors</h2>
 
-            <div class="form_field_container">
-              <label for="department">Department:</label>
-              <input
-                class="form_field"
-                type="text"
-                id="department"
-                name="department"
-              />
+          <div class="form_field_container">
+            <label for="department">Department:</label>
+            <input class="form_field" type="text" id="department" name="department" />
 
-              <label for="date">Date:</label>
-              <input class="form_field" type="date" id="date" name="date" />
+            <label for="date">Date:</label>
+            <input class="form_field" type="date" id="date" name="date" />
 
-              <button class="form_button" type="submit" name="search_btn">
-                View Available Times
-              </button>
-            </div>
+            <button class="form_button" type="submit" name="search_btn">
+              View Available Times
+            </button>
           </div>
-        </form>
-      </div>
-      <div class="left-bottom">
-        <form class="form" method="post">
-          <div class="form_body">
-            <h2 class="form_header">Schedule an Appointment</h2>
+        </div>
+      </form>
+    </div>
+    <div class="left-bottom">
+      <form class="form" method="post">
+        <div class="form_body">
+          <h2 class="form_header">Schedule an Appointment</h2>
 
-            <div class="form_field_container">
-              <label for="id">Doctor ID:</label>
-              <input
-                class="form_field"
-                type="text"
-                id="id"
-                name="id"
-              />
+          <div class="form_field_container">
+            <label for="id">Doctor ID:</label>
+            <input class="form_field" type="text" id="id" name="id" />
 
-              <label for="datetime">Date and Time:</label>
-              <input class="form_field" type="datetime-local" id="datetime" name="datetime" />
-              
-              <button class="form_button" type="submit" name="schedule_btn">
-                Schedule 30 min
-              </button>
-            </div>
+            <label for="datetime">Date and Time:</label>
+            <input class="form_field" type="datetime-local" id="datetime" name="datetime" />
+
+            <button class="form_button" type="submit" name="schedule_btn">
+              Schedule 30 min
+            </button>
           </div>
-        </form>
-      </div>
-      <div class="right">
-        <table class="table">
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Times</th>
-          </tr>
-          <?php foreach ($departmentAvailability as $availability): ?>
+        </div>
+      </form>
+    </div>
+    <div class="right">
+      <table class="table">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Department</th>
+          <th>Date</th>
+          <th>Schedule</th>
+        </tr>
+        <?php foreach ($departmentAvailability as $availability): ?>
           <tr>
             <td><?= $availability["id"] ?></td>
             <td><?= $availability["doctor"] ?></td>
@@ -221,15 +214,16 @@ $conn->close();
             <td><?= $datestr ?></td>
             <td>
               <?php foreach ($availability["times"] as $slot): ?>
-              <?= $slot["start"] ?>
-              -
-              <?= $slot["end"] ?><br/>
+                <?= $slot["start"] ?>
+                -
+                <?= $slot["end"] ?><br />
               <?php endforeach; ?>
             </td>
           </tr>
-          <?php endforeach; ?>
-        </table>
-      </div>
+        <?php endforeach; ?>
+      </table>
     </div>
-  </body>
+  </div>
+</body>
+
 </html>
