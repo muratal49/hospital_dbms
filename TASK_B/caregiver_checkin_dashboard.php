@@ -56,13 +56,7 @@ $conn->close();
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Caregiver Dashboard</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px;}
-    .card { border: 1px solid #ddd; padding: 12px; margin-bottom: 12px; border-radius: 6px;}
-    .header { margin-bottom: 16px;}
-    table { width: 100%; border-collapse: collapse;}
-    th,td { padding: 8px; border: 1px solid #ccc; text-align: left;}
-  </style>
+  <link rel="stylesheet" href="caregiver_checkin_dashboard.css" />
 </head>
 
 <body>
