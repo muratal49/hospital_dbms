@@ -126,6 +126,19 @@ if (isset($_POST['schedule_btn'])) {
     }
   }
 
+  // Check if patient has conflicting appointment
+  if ($message == "") {
+    $sql = "SELECT COUNT(*) as count from appointment
+            WHERE patient_id = '{$_SESSION['patient_id']}' 
+            AND start < '$end_str' AND end > '$start_str'";
+    $result = $conn->query($sql);
+    $row = $result->fetch_assoc();
+
+    if ($row["count"] > 0) {
+      $message = "You have a conflicting appointment at this time.";
+    }
+  }
+
   // Schedule appointment
   if ($message == '') {
     $sql = "INSERT INTO appointment (doctor_id, patient_id, start, end)
@@ -179,10 +192,7 @@ $conn->close();
             <select class="form_field" id="department" name="department">
               <?php foreach ($departments_list as $dept_name): ?>
                 <!-- Need POST to save state on reload -->
-                <option 
-                  value="<?= $dept_name ?>" 
-                  <?= ($_POST['department'] ?? '') === $dept_name ? 'selected' : '' ?>
-                >
+                <option value="<?= $dept_name ?>" <?= ($_POST['department'] ?? '') === $dept_name ? 'selected' : '' ?>>
                   <?= $dept_name ?>
                 </option>
               <?php endforeach; ?>
@@ -190,13 +200,8 @@ $conn->close();
 
             <label for="date">Date:</label>
             <!-- Need POST to save state on reload -->
-            <input 
-              class="form_field" 
-              type="date" 
-              id="date" name="date"  
-              min="<?= date('Y-m-d') ?>"
-              value="<?= $_POST['date'] ?? '' ?>" 
-            />
+            <input class="form_field" type="date" id="date" name="date" min="<?= date('Y-m-d') ?>"
+              value="<?= $_POST['date'] ?? '' ?>" />
 
             <button class="form_button" type="submit" name="search_btn">
               View Available Times
@@ -215,13 +220,8 @@ $conn->close();
             <input class="form_field" type="text" id="id" name="id" />
 
             <label for="datetime">Date and Time:</label>
-            <input 
-              class="form_field" 
-              type="datetime-local" 
-              id="datetime" 
-              name="datetime" 
-              min="<?= date('Y-m-d\TH:i') ?>"
-            />
+            <input class="form_field" type="datetime-local" id="datetime" name="datetime"
+              min="<?= date('Y-m-d\TH:i') ?>" />
 
             <button class="form_button" type="submit" name="schedule_btn">
               Schedule 30 min

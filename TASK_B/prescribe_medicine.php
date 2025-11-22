@@ -19,12 +19,11 @@ $id = $_SESSION["doctor_id"];
 // identify the patient the doctor is currently in appointment with
 $find_appointment = $conn->query("SELECT id, patient_id, notes FROM appointment WHERE start < '$now' AND end > '$now' AND doctor_id = $id");
 if ($find_appointment->num_rows == 0) {
-
   // case where the caregiver is not in an appointment - no medicine can be prescribed!
   $message = "There is no ongoing appointment!";
   $patient = "No patient available";
   $notes = "";
-
+  $has_active_appointment = false;
 } else {
 
   // case where the caregiver IS in an appointment
@@ -32,6 +31,7 @@ if ($find_appointment->num_rows == 0) {
   $appointment_id = $row['id'];
   $patient_id = $row['patient_id'];
   $notes = $row['notes'];
+  $has_active_appointment = true;
 
   $find_patient = $conn->query("SELECT first_name, last_name FROM patient WHERE id = $patient_id");
   $row = $find_patient->fetch_assoc();
@@ -48,7 +48,7 @@ if ($find_appointment->num_rows == 0) {
       exit();
     }
   }
-  
+
   if (isset($_POST["prescribe_btn"])) {
     $medicine = $_POST["medicine"] ?? '';
     $dosage = $_POST["dosage"] ?? '';
@@ -67,7 +67,7 @@ if ($find_appointment->num_rows == 0) {
     if ($message == '') {
       $update = $conn->prepare("INSERT INTO prescription(name, dosage, expiration, appointment_id) VALUES (?, ?, ?, ?)");
       $update->bind_param("sssi", $medicine, $dosage, $expiration_date, $appointment_id);
-      
+
       if ($update->execute()) {
         header('Location: caregiver_dashboard.php');
         exit();
@@ -82,60 +82,72 @@ $conn->close();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Caregiver Portal - Prescribe Medicine & Make Appointment Notes</title>
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
-<h1>Caregiver Portal - Prescribe Medicine & Make Appointment Notes</h1>
+  <h1>Caregiver Portal - Prescribe Medicine & Make Appointment Notes</h1>
 
-<!-- Error Message -->
-<?php if ($message != "") {
-  echo "<div class=\"message-container\">
+  <!-- Error Message -->
+  <?php if ($message != "") {
+    echo "<div class=\"message-container\">
     <p class=\"error-message\">$message</p>
   </div>";
-} ?>
+  } ?>
 
-<div class="container">
-  <form class="form" method="post">
-    <div class="form-row">
+  <div class="container">
+    <form class="form" method="post">
+      <div class="form-row">
         <!-- LEFT -->
         <div class="form-group">
-            <div class="label">Patient Name:</div>
-            <div class="patient-name"><?php echo $patient; ?></div>
+          <div class="label">Patient Name:</div>
+          <div class="patient-name"><?php echo $patient; ?></div>
         </div>
 
         <!-- RIGHT -->
         <div class="form-group">
-            <div class="label">Medicine:</div>
-            <input type="text" placeholder="Tylenol" id="medicine" name="medicine">
+          <div class="label">Medicine:</div>
+          <input type="text" placeholder="Tylenol" id="medicine" name="medicine">
 
-            <div class="label" style="margin-top:15px;">Dosage:</div>
-            <input type="text" placeholder="300 mg" id="dosage" name="dosage">
+          <div class="label" style="margin-top:15px;">Dosage:</div>
+          <input type="text" placeholder="300 mg" id="dosage" name="dosage">
 
-            <div class="label" style="margin-top:15px;">Expiration:</div>
-            <input type="date" id="expiration_date" name="expiration_date">
+          <div class="label" style="margin-top:15px;">Expiration:</div>
+          <input type="date" id="expiration_date" name="expiration_date">
         </div>
-    </div>
+      </div>
 
-    <div class="button-container">
-        <button class="button" type="submit" name="prescribe_btn">Prescribe</button>
-    </div>
+      <div class="button-container">
+        <button class="button" type="submit" name="prescribe_btn" <?php echo !$has_active_appointment ? 'disabled' : ''; ?>>
+          Prescribe
+        </button>
+      </div>
 
-    <div class="form-group">
-            <div class="label">Appointment notes:</div>
-            <input type="text" id="notes" value="<?php echo htmlspecialchars($notes); ?>">
-    </div>
-      
-    <div class="button-container">
-        <button class="button" type="submit" name="notes_btn">Save</button>
-    </div>
-      
-    </div>
+        <div class="label" style="padding-top: 20px">Appointment notes:</div>
+        <textarea 
+          rows="2" 
+          name="notes" 
+          id="notes"
+        >
+          <?= $notes ?>
+        </textarea>
+
+
+      <div class="button-container">
+        <button class="button" type="submit" name="notes_btn" <?php echo !$has_active_appointment ? 'disabled' : ''; ?>>
+          Save
+        </button>
+      </div>
+
+  </div>
   </form>
-</div>
+  </div>
 
 </body>
+
 </html>
