@@ -32,12 +32,60 @@ $history = $_SESSION['patient_history'] ?? [];
 <body>
   <h1 class="header">Caregiver Dashboard</h1>
 
+  <div style="float:right;">
+    <?php if (isset($_SESSION['doctor_id'])): ?>
+      <?php
+        // show doctor name
+        $doc_name = '';
+        $dbc = getConnection();
+        $dstmt = $dbc->prepare('SELECT first_name, last_name FROM doctor WHERE id = ? LIMIT 1');
+        if ($dstmt) {
+          $dstmt->bind_param('i', $_SESSION['doctor_id']);
+          $dstmt->execute();
+          $dres = $dstmt->get_result();
+          if ($dres && $dres->num_rows) {
+            $drow = $dres->fetch_assoc();
+            $doc_name = $drow['first_name'] . ' ' . $drow['last_name'];
+          }
+          $dstmt->close();
+        }
+        $dbc->close();
+      ?>
+      <div><strong>Doctor:</strong> <?= htmlspecialchars($doc_name) ?> | <a href="dashboard.php?logout=1">Logout</a></div>
+    <?php elseif (isset($_SESSION['patient_id'])): ?>
+      <?php
+        $pname = '';
+        $dbc = getConnection();
+        $pstmt = $dbc->prepare('SELECT first_name, last_name FROM patient WHERE id = ? LIMIT 1');
+        if ($pstmt) {
+          $pstmt->bind_param('i', $_SESSION['patient_id']);
+          $pstmt->execute();
+          $pres = $pstmt->get_result();
+          if ($pres && $pres->num_rows) {
+            $prow = $pres->fetch_assoc();
+            $pname = $prow['first_name'] . ' ' . $prow['last_name'];
+          }
+          $pstmt->close();
+        }
+        $dbc->close();
+      ?>
+      <div><strong>Patient:</strong> <?= htmlspecialchars($pname) ?> | <a href="dashboard.php?logout=1">Logout</a></div>
+    <?php endif; ?>
+  </div>
+
   <div class="card">
     <h2>Patient</h2>
     <p><strong>Name:</strong> <?= htmlspecialchars($patient['first_name'] . ' ' . $patient['last_name']) ?></p>
     <p><strong>DOB:</strong> <?= htmlspecialchars($patient['dob']) ?></p>
     <p><strong>Email:</strong> <?= htmlspecialchars($patient['email'] ?? '') ?></p>
     <p><strong>Phone:</strong> <?= htmlspecialchars($patient['phone'] ?? '') ?></p>
+    <?php if (isset($_SESSION['doctor_id'])): ?>
+      <p>
+        <a href="view_patient_history.php?patient_id=<?= urlencode($patient['id']) ?>">View full history (doctor view)</a>
+      </p>
+    <?php else: ?>
+      <p><em>Doctor-only view available — <a href="login.php">log in as a doctor</a> to access full history.</em></p>
+    <?php endif; ?>
   </div>
 
   <div class="card">

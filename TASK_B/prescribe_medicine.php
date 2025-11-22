@@ -13,8 +13,8 @@ if (!isset($_SESSION["doctor_id"])) {
   exit();
 }
 
-$id = $_SESSION["doctor_id"];
 $now = date('Y-m-d H:i:s');
+$id = $_SESSION["doctor_id"];
 
 // identify the patient the doctor is currently in appointment with
 $find_appointment = $conn->query("SELECT id, patient_id FROM appointment WHERE start < '$now' AND end > '$now' AND doctor_id = $id");
