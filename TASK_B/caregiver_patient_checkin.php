@@ -49,7 +49,7 @@ if (isset($_POST["caregiver_checkin_btn"])) {
             $row = $result->fetch_assoc();
 
             // Store patient id and basic info in session for later use
-            $_SESSION["patient_id"] = $row["id"];
+            $_SESSION["checked_in_patient_id"] = $row["id"];
             $_SESSION["patient_info"] = [
               'id' => $row['id'],
               'first_name' => $row['first_name'],
