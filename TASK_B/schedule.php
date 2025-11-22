@@ -115,7 +115,8 @@ if (isset($_POST['schedule_btn'])) {
             VALUES ('$doctor_id', '{$_SESSION['patient_id']}', '$start_str', '$end_str')";
 
     if ($conn->query($sql) === TRUE) {
-      $message = 'Appointment scheduled successfully';
+      header('Location: patient_dashboard.php');
+      exit();
     } else {
       $message = 'Error scheduling appointment: ' . $conn->error;
     }

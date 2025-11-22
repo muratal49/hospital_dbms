@@ -54,7 +54,12 @@ if (isset($_POST["update_info_btn"])) {
 
     $update->bind_param("sssi", $phone, $email, $pharmacy_address, $_SESSION["patient_id"]);
 
-    $update->execute();
+    if ($update->execute()) {
+      header('Location: patient_dashboard.php');
+      exit();
+    } else {
+      $message = 'Error updating information: ' . $conn->error;
+    }
   }
 }
 $conn->close();

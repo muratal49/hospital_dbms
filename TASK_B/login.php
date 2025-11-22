@@ -9,11 +9,11 @@ $message = "";
 
 // Redirect if already logged in
 if (isset($_SESSION["patient_id"])) {
-  header('Location: dashboard.php');
+  header('Location: patient_dashboard.php');
   exit();
 }
 if (isset($_SESSION["doctor_id"])) {
-  header('Location: dashboard.php');
+  header('Location: caregiver_dashboard.php');
   exit();
 }
 
@@ -35,7 +35,7 @@ if (isset($_POST["patient_login_btn"])) {
       $row = $result->fetch_assoc();
 
       $_SESSION["patient_id"] = $row["id"];
-      header('Location: dashboard.php');
+      header('Location: patient_dashboard.php');
       exit();
     } else {
       $message = 'Incorrect username or password';
@@ -59,7 +59,7 @@ if (isset($_POST["caregiver_login_btn"])) {
       $row = $result->fetch_assoc();
 
       $_SESSION["doctor_id"] = $row["id"];
-      header('Location: dashboard.php');
+      header('Location: caregiver_dashboard.php');
       exit();
     } else {
       $message = 'Incorrect username or password';
