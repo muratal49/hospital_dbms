@@ -86,7 +86,7 @@ if (isset($_POST['schedule_btn'])) {
     }
 
     // Prevent creating appointment in the past
-    else if ($datetime_obj < new DateTime("today")) {
+    else if ($datetime_obj < new DateTime()) {
       $message = 'Appointment time must be in the future';
     }
 
