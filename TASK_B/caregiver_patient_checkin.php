@@ -9,8 +9,10 @@ $conn = getConnection();
 #caregiver check-in for patient first,last,and dob:
 #Enter patient's first name, last name, and date of birth to check them in:
 
-
-
+if (!isset($_SESSION["doctor_id"])) {
+  header('Location: login.php');
+  exit();
+}
 
 $message = "";
 if (isset($_POST["caregiver_checkin_btn"])) {
