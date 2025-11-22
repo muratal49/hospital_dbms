@@ -15,6 +15,10 @@ if (isset($_POST["schedule_apt_btn"])) {
 } else if (isset($_POST["update_info_btn"])) {
   header('Location: update_information.php');
   exit();
+} else if (isset($_POST["logout_btn"])) {
+  unset($_SESSION["patient_id"]);
+  header('Location: login.php');
+  exit();
 }
 ?>
 
@@ -43,6 +47,7 @@ if (isset($_POST["schedule_apt_btn"])) {
 
           <button type="submit" name="update_info_btn">Update information</button>
 
+          <button type="submit" name="logout_btn">Log out</button>
         </div>
       </div>
     </form>
