@@ -16,8 +16,11 @@ if (!isset($_SESSION["patient_id"])) {
 
 $this_id = $_SESSION["patient_id"];
 if (isset($_POST["delete_account_btn"])) {
-  $sql = "DELETE from patient WHERE id = '$this' CASCADE";
+  $sql = "DELETE from patient WHERE id = ? CASCADE";
+  $sql->bind_param("i", $this_id);
+  $sql->execute()
   unset($_SESSION["patient_id"]);
+  header('Location: login.php');
   exit();
 }
 
