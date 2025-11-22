@@ -73,8 +73,15 @@ if (isset($_POST['schedule_btn'])) {
     // Check valid date time and within working hours
     if ($datetime_obj === false || $datetime_obj->format('Y-m-d\TH:i') !== $datetime_str) {
       $message = 'Enter a valid date and time';
+    }
 
-    } else if ($datetime_obj->format('H:i') < '09:00' || $datetime_obj->format('H:i') > '20:00') {
+    // Prevent creating appointment in the past
+    else if ($datetime_obj < new DateTime("today")) {
+      $message = 'Appointment time must be in the future';
+    }
+    
+    // Check working hours
+    else if ($datetime_obj->format('H:i') < '09:00' || $datetime_obj->format('H:i') > '20:00') {
       $message = 'Appointment time must be between working hours (09:00 - 20:00)';
     }
   }
@@ -210,6 +217,8 @@ $conn->close();
           <tr>
             <td><?= $availability["id"] ?></td>
             <td><?= $availability["doctor"] ?></td>
+            <td><?= $department ?></td>
+            <td><?= $datestr ?></td>
             <td>
               <?php foreach ($availability["times"] as $slot): ?>
               <?= $slot["start"] ?>
