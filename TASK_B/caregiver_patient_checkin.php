@@ -50,8 +50,8 @@ if (isset($_POST["caregiver_checkin_btn"])) {
 
 
             // Redirect caregiver to 
-            header('Location: view_patient_history.php');
             $_SESSION["checked_in_patient_id"] = $row["id"];
+            header('Location: view_patient_history.php');
             exit();
           } else {
             $message = 'No matching patient found';
