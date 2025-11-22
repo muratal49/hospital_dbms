@@ -100,7 +100,7 @@ $conn->close();
       </div>";
   } ?>
 
-  <div class="form_container">
+  <div class="container">
     <form method="post">
       <div class="form_body">
         <h2 class="form_header">Patient update information</h2>
@@ -122,12 +122,12 @@ $conn->close();
           <input type="text" id="pharmacy_address" name="pharmacy_address"
             value="<?php echo $session_pharmacy_address; ?>"><br><br>
 
-          <button type="submit" name="update_info_btn">Update</button>
+          <button class="button" type="submit" name="update_info_btn">Update</button>
         </div>
       </div>
     </form>
     <form method="post">
-      <button name="delete_account_btn">DELETE my account</button>
+      <button class="button" name="delete_account_btn" style="margin-top: 20px">DELETE MY ACCOUNT</button>
     </form>
   </div>
 </body>
