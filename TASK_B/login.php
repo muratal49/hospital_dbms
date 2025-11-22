@@ -2,7 +2,6 @@
 session_start();
 
 require_once 'db_config.php';
-unset($_SESSION['patient_id']);
 
 $conn = getConnection();
 $message = "";

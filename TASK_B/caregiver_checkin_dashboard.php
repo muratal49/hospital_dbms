@@ -1,6 +1,12 @@
 <?php
 session_start();
 
+// DONT DELTETE - BREAKS STUFF FOR SOME REASON
+require_once 'db_config.php';
+
+
+$conn = getConnection();
+
 // Ensure patient selected
 if (!isset($_SESSION['checked_in_patient_id']) || !isset($_SESSION['patient_info'])) {
   header('Location: caregiver_patient_checkin.php');

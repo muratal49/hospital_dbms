@@ -11,7 +11,7 @@ if (!isset($_SESSION['doctor_id'])) {
   exit();
 }
 
-$patient_id = isset($_GET['patient_id']) ? intval($_GET['patient_id']) : 0;
+$patient_id = isset($_GET['checked_in_patient_id']) ? intval($_GET['checked_in_patient_id']) : 0;
 if ($patient_id <= 0) {
   echo 'Invalid patient id';
   exit();
