@@ -4,6 +4,8 @@ session_start();
 // Basic dashboard for caregiver after check-in. Shows patient info and past appointments with prescriptions.
 require_once 'db_config.php';
 
+$conn = getConnection();
+
 // Ensure patient selected
 if (!isset($_SESSION['patient_id']) || !isset($_SESSION['patient_info'])) {
   header('Location: caregiver_patient_checkin.php');
