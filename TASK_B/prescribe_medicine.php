@@ -17,12 +17,13 @@ $now = date('Y-m-d H:i:s');
 $id = $_SESSION["doctor_id"];
 
 // identify the patient the doctor is currently in appointment with
-$find_appointment = $conn->query("SELECT id, patient_id FROM appointment WHERE start < '$now' AND end > '$now' AND doctor_id = $id");
+$find_appointment = $conn->query("SELECT id, patient_id, notes FROM appointment WHERE start < '$now' AND end > '$now' AND doctor_id = $id");
 if ($find_appointment->num_rows == 0) {
 
   // case where the caregiver is not in an appointment - no medicine can be prescribed!
   $message = "There is no ongoing appointment!";
   $patient = "No patient available";
+  $notes = "";
 
 } else {
 
@@ -30,6 +31,7 @@ if ($find_appointment->num_rows == 0) {
   $row = $find_appointment->fetch_assoc();
   $appointment_id = $row['id'];
   $patient_id = $row['patient_id'];
+  $notes = $row['notes'];
 
   $find_patient = $conn->query("SELECT first_name, last_name FROM patient WHERE id = $patient_id");
   $row = $find_patient->fetch_assoc();
@@ -37,6 +39,16 @@ if ($find_appointment->num_rows == 0) {
   $patient_last = $row['last_name'];
   $patient = $patient_first . " " . $patient_last;
 
+  if (isset($_POST["notes_btn"])) {
+    $new_notes = $_POST["notes"];
+    $update = $conn->prepare("UPDATE appointment SET notes = ? WHERE id = ?");
+    $update->bind_param("si", $new_notes, $appointment_id);
+    if ($update->execute()) {
+      header('Location: caregiver_dashboard.php');
+      exit();
+    }
+  }
+  
   if (isset($_POST["prescribe_btn"])) {
     $medicine = $_POST["medicine"] ?? '';
     $dosage = $_POST["dosage"] ?? '';
@@ -72,12 +84,12 @@ $conn->close();
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Caregiver Portal - Prescribe Medicine</title>
+  <title>Caregiver Portal - Prescribe Medicine & Make Appointment Notes</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<h1>Caregiver Portal - Prescribe Medicine</h1>
+<h1>Caregiver Portal - Prescribe Medicine & Make Appointment Notes</h1>
 
 <!-- Error Message -->
 <?php if ($message != "") {
@@ -110,6 +122,17 @@ $conn->close();
 
     <div class="button-container">
         <button class="button" type="submit" name="prescribe_btn">Prescribe</button>
+    </div>
+
+    <div class="form-group">
+            <div class="label">Appointment notes:</div>
+            <input type="text" id="notes" value="<?php echo htmlspecialchars($notes); ?>">
+    </div>
+      
+    <div class="button-container">
+        <button class="button" type="submit" name="notes_btn">Save</button>
+    </div>
+      
     </div>
   </form>
 </div>
