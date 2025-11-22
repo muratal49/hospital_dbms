@@ -14,6 +14,13 @@ if (!isset($_SESSION["patient_id"])) {
   exit();
 }
 
+$this_id = $_SESSION["patient_id"];
+if (isset($_POST["delete_account_btn"])) {
+  $sql = "DELETE from patient WHERE id = '$this' CASCADE";
+  unset($_SESSION["patient_id"]);
+  exit();
+}
+
 $id = $_SESSION["patient_id"];
 $sql = "SELECT email, phone, pharmacy_address FROM patient WHERE id = '$id'";
 $result = $conn->query($sql);
@@ -110,6 +117,9 @@ $conn->close();
           <button type="submit" name="update_info_btn">Update</button>
         </div>
       </div>
+    </form>
+    <form method="post">
+          <button name="delete_account_btn">DELETE my account</button>
     </form>
   </div>
 </body>
