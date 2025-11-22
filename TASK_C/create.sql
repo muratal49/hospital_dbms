@@ -1,7 +1,7 @@
 CREATE TABLE department(
     id INT AUTO_INCREMENT,
-    name VARCHAR(32) NOT NULL UNIQUE,
-    building VARCHAR(32) NOT NULL,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    building VARCHAR(100) NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -61,7 +61,7 @@ CREATE TABLE appointment(
 CREATE TABLE prescription(
 	id INT AUTO_INCREMENT,
 	name VARCHAR(64) NOT NULL,
-	dosage VARCHAR(16) NOT NULL,
+	dosage VARCHAR(32) NOT NULL,
 	expiration DATETIME NOT NULL,
     appointment_id INT NOT NULL,
     PRIMARY KEY (id),
