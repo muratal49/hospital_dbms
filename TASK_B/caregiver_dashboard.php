@@ -7,13 +7,13 @@ if (!isset($_SESSION["doctor_id"])) {
 }
 
 if (isset($_POST["checkin_btn"])) {
-  header('header: caregiver_patient_checkin.php');
+  header('Location: caregiver_patient_checkin.php');
   exit();
 } else if (isset($_POST["prescribe_btn"])) {
-  header('header: prescribe_medicine.php');
+  header('Location: prescribe_medicine.php');
   exit();
 } else if (isset($_POST["view_history_btn"])) {
-  header('header: view_patient_history.php');
+  header('Location: view_patient_history.php');
   exit();
 }
 ?>

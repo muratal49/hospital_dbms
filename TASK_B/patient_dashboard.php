@@ -7,13 +7,13 @@ if (!isset($_SESSION["patient_id"])) {
 }
 
 if (isset($_POST["schedule_apt_btn"])) {
-  header('header: schedule.php');
+  header('Location: schedule.php');
   exit();
 } else if (isset($_POST["view_apt_btn"])) {
-  header('header: patient_view_appointments.php');
+  header('Location: patient_view_appointments.php');
   exit();
 } else if (isset($_POST["update_info_btn"])) {
-  header('header: update_information.php');
+  header('Location: update_information.php');
   exit();
 }
 ?>
