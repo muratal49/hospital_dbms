@@ -26,6 +26,7 @@ if (isset($_POST["checkin_btn"])) {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Caregiver Dashboard</title>
+  div {text-align: center;}
   <link rel="stylesheet" href="styles.css" />
 </head>
 
