@@ -39,9 +39,7 @@ if (isset($_POST["caregiver_checkin_btn"])) {
 
       if ($stmt === false) {
         $message = 'Database error: failed to prepare statement';
-      } 
-      else 
-        {
+      } else {
         $stmt->bind_param('ssss', $first_name, $last_name, $dob_norm, $email);
         if (!$stmt->execute()) {
           $message = 'Database error: failed to execute query';
@@ -112,3 +110,83 @@ if (isset($_POST["caregiver_checkin_btn"])) {
     }
   }
 }
+
+$conn->close();
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Caregiver Portal - Patient Check-in</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <h1>Caregiver Portal - Patient Check-in</h1>
+
+  <div class="container">
+    <form method="post" action="caregiver_patient_checkin.php">
+      <!-- Patient First Name -->
+      <div class="form-row">
+        <div class="form-group">
+          <div class="label">Patient First Name:</div>
+        </div>
+
+        <div class="form-group">
+          <input type="text" name="first_name" required>
+        </div>
+      </div>
+
+      <!-- Patient Last Name -->
+      <div class="form-row">
+        <div class="form-group">
+          <div class="label">Patient Last Name:</div>
+        </div>
+
+        <div class="form-group">
+          <input type="text" name="last_name" required>
+        </div>
+      </div>
+
+      <!-- Patient Date of Birth -->
+      <div class="form-row">
+        <div class="form-group">
+          <div class="label">Patient Date of Birth:</div>
+        </div>
+
+        <div class="form-group">
+          <input type="date" name="dob" required>
+        </div>
+      </div>
+
+      <!-- Patient Email -->
+      <div class="form-row">
+        <div class="form-group">
+          <div class="label">Patient Email:</div>
+        </div>
+
+        <div class="form-group">
+          <input type="email" name="email" placeholder="Enter patient email" required>
+        </div>
+      </div>
+
+      <!-- Reference Date (optional) -->
+      <div class="form-row">
+        <div class="form-group">
+          <div class="label">Reference Date (optional)</div>
+        </div>
+
+        <div class="form-group">
+          <input type="date" name="reference_date" placeholder="Optional ( Default = ALL )">
+        </div>
+      </div>
+
+      <!-- Button -->
+      <div class="button-container">
+        <button class="button" type="submit" name="caregiver_checkin_btn">Retrieve Patient Data</button>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

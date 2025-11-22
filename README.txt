@@ -1,6 +1,4 @@
-- Update Task A to reflect changes in relations (addresses)
-- Link everything together
-
+- Issues with ' when sending as a text (messes up stuff)
 
 User:
 After submission, redirect back to dashboard
@@ -14,4 +12,6 @@ Caregiver:
 Patient Check In => caregiver_patient_checkin.php
 Prescribe => prescribe_medicine.php
 View History => view_patient_history.php
+
+
 

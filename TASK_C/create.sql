@@ -47,7 +47,7 @@ CREATE TABLE appointment(
     id INT AUTO_INCREMENT,
     start DATETIME NOT NULL,
     end DATETIME NOT NULL,
-    notes TINYTEXT DEFAULT "",
+    notes VARCHAR(255) DEFAULT "",
     patient_id INT NOT NULL,
     doctor_id INT NOT NULL,
     PRIMARY KEY (id),

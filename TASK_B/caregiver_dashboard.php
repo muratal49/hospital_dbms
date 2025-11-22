@@ -12,9 +12,6 @@ if (isset($_POST["checkin_btn"])) {
 } else if (isset($_POST["prescribe_btn"])) {
   header('Location: prescribe_medicine.php');
   exit();
-} else if (isset($_POST["view_history_btn"])) {
-  header('Location: view_patient_history.php');
-  exit();
 }
 ?>
 
@@ -40,9 +37,6 @@ if (isset($_POST["checkin_btn"])) {
           <button type="submit" name="checkin_btn">Patient check-in</button>
 
           <button type="submit" name="prescribe_btn">Prescribe medicine</button>
-
-          <button type="submit" name="view_history_btn">View patient history</button>
-
         </div>
       </div>
     </form>

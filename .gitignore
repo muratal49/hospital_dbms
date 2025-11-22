@@ -1,2 +1,3 @@
 # Ignore local env files
-TASK B/.env
+TASK_B/.env.example
+TASK_B/.env.*

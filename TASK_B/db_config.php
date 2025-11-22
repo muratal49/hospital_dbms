@@ -6,7 +6,7 @@ function getConnection()
     $password = "....";
     $dbname = "mal_1";
     // Load local .env if present (keeps secrets out of repo)
-    $envPath = __DIR__ . '/.env';
+    $envPath = __DIR__ . '/.env.example';
     if (file_exists($envPath)) {
         $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         foreach ($lines as $line) {

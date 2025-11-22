@@ -1,0 +1,11 @@
+id,password,first_name,last_name,phone,email,department_id,is_active
+1,pass123,John,Smith,555-0101,john.smith@example.com,1,1
+2,pass123,Emily,Jones,555-0102,emily.jones@example.com,2,1
+3,pass123,Michael,Brown,555-0103,michael.brown@example.com,3,1
+4,pass123,Sarah,Lee,555-0104,sarah.lee@example.com,4,1
+5,pass123,David,Wilson,555-0105,david.wilson@example.com,5,1
+6,pass123,Linda,Taylor,555-0106,linda.taylor@example.com,6,1
+7,pass123,James,Anderson,555-0107,james.anderson@example.com,7,1
+8,pass123,Karen,Thomas,555-0108,karen.thomas@example.com,1,1
+9,pass123,Robert,Moore,555-0109,robert.moore@example.com,2,1
+10,pass123,Nancy,Martin,555-0110,nancy.martin@example.com,3,1
