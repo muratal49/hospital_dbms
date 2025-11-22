@@ -80,7 +80,7 @@ if (isset($_POST['schedule_btn'])) {
 
   // Validate it is an actual doctor id
   if ($message == '') {
-    $sql = "SELECT COUNT(*) FROM doctor WHERE id = '$doctor_id'";
+    $sql = "SELECT COUNT(*) as count FROM doctor WHERE id = '$doctor_id'";
     $result = $conn->query($sql);
     $row = $result->fetch_assoc();
 
@@ -97,7 +97,7 @@ if (isset($_POST['schedule_btn'])) {
     $end_obj->modify('+30 minutes');
     $end_str = $end_obj->format('Y-m-d H:i:s');
 
-    $sql = "SELECT COUNT(*) from appointment
+    $sql = "SELECT COUNT(*) as count from appointment
             WHERE doctor_id = '$doctor_id' 
             AND start < '$end_str' AND end > '$start_str'";
     $result = $conn->query($sql);
