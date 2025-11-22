@@ -36,21 +36,18 @@ if (isset($_POST["schedule_apt_btn"])) {
 <body>
   <h1 class="header">Patient Dashboard</h1>
 
-  <div class="form_container">
-    <form class="/submit" method="post">
-      <div class="form_body">
-
-        <div class="form_field_container">
-
-          <button type="submit" name="schedule_apt_btn">Schedule appointments</button>
-
-          <button type="submit" name="view_apt_btn">View appointments</button>
-
-          <button type="submit" name="update_info_btn">Update information</button>
-
-          <button type="submit" name="logout_btn">Log out</button>
-        </div>
-      </div>
+  <div class="grid-container">
+    <form class="grid-item" method="post">
+      <button type="submit" name="schedule_apt_btn">Schedule appointments</button>
+    </form>
+    <form class="grid-item" method="post">
+      <button type="submit" name="view_apt_btn">View appointments</button>
+    </form>
+    <form class="grid-item" method="post">
+      <button type="submit" name="update_info_btn">Update information</button>
+    </form>
+    <form class="grid-item" method="post">
+      <button type="submit" name="logout_btn">Log out</button>
     </form>
   </div>
 </body>

@@ -33,19 +33,15 @@ if (isset($_POST["checkin_btn"])) {
 <body>
   <h1 class="header">Caregiver Dashboard</h1>
 
-  <div class="form_container">
-    <form class="/submit" method="post">
-      <div class="form_body">
-
-        <div class="form_field_container">
-
-          <button type="submit" name="checkin_btn">Patient check-in</button>
-
-          <button type="submit" name="prescribe_btn">Prescribe medicine</button>
-
-          <button type="submit" name="logout_btn">Log out</button>
-        </div>
-      </div>
+  <div class="grid-container">
+    <form class="grid-item" method="post">
+      <button type="submit" name="checkin_btn">Patient check-in</button>
+    </form>
+    <form class="grid-item" method="post">
+      <button type="submit" name="prescribe_btn">Prescribe medicine</button>
+    </form>
+    <form class="grid-item" method="post">
+      <button type="submit" name="logout_btn">Log out</button>
     </form>
   </div>
 </body>
