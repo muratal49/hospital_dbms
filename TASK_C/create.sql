@@ -51,7 +51,7 @@ CREATE TABLE appointment(
     patient_id INT NOT NULL,
     doctor_id INT NOT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (patient_id) REFERENCES patient(id),
+    FOREIGN KEY (patient_id) REFERENCES patient(id) ON DELETE CASCADE,
     FOREIGN KEY (doctor_id) REFERENCES doctor(id),
     UNIQUE KEY unique_doctor_time (doctor_id, start, end),
     UNIQUE KEY unique_patient_time (patient_id, start, end),
@@ -65,5 +65,5 @@ CREATE TABLE prescription(
 	expiration DATETIME NOT NULL,
     appointment_id INT NOT NULL,
     PRIMARY KEY (id),
-	FOREIGN KEY (appointment_id) REFERENCES appointment(id)
+	FOREIGN KEY (appointment_id) REFERENCES appointment(id) ON DELETE CASCADE
 );
