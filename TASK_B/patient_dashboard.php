@@ -29,6 +29,7 @@ if (isset($_POST["schedule_apt_btn"])) {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Patient Dashboard</title>
+  div {text-align: center;}
   <link rel="stylesheet" href="styles.css" />
 </head>
 
