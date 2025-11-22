@@ -9,6 +9,16 @@ $conn = getConnection();
 $message = "";
 $departmentAvailability = [];
 
+// For dropdown list
+$departments_list = [];
+$dept_sql = "SELECT name FROM department ORDER BY name ASC";
+$dept_result = $conn->query($dept_sql);
+if ($dept_result) {
+  while ($row = $dept_result->fetch_assoc()) {
+    $departments_list[] = $row['name'];
+  }
+}
+
 // Redirect if already logged in
 if (!isset($_SESSION["patient_id"])) {
   header('Location: login.php');
@@ -166,10 +176,27 @@ $conn->close();
 
           <div class="form_field_container">
             <label for="department">Department:</label>
-            <input class="form_field" type="text" id="department" name="department" />
+            <select class="form_field" id="department" name="department">
+              <?php foreach ($departments_list as $dept_name): ?>
+                <!-- Need POST to save state on reload -->
+                <option 
+                  value="<?= $dept_name ?>" 
+                  <?= ($_POST['department'] ?? '') === $dept_name ? 'selected' : '' ?>
+                >
+                  <?= $dept_name ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
 
             <label for="date">Date:</label>
-            <input class="form_field" type="date" id="date" name="date" />
+            <!-- Need POST to save state on reload -->
+            <input 
+              class="form_field" 
+              type="date" 
+              id="date" name="date"  
+              min="<?= date('Y-m-d') ?>"
+              value="<?= $_POST['date'] ?? '' ?>" 
+            />
 
             <button class="form_button" type="submit" name="search_btn">
               View Available Times
@@ -188,7 +215,13 @@ $conn->close();
             <input class="form_field" type="text" id="id" name="id" />
 
             <label for="datetime">Date and Time:</label>
-            <input class="form_field" type="datetime-local" id="datetime" name="datetime" />
+            <input 
+              class="form_field" 
+              type="datetime-local" 
+              id="datetime" 
+              name="datetime" 
+              min="<?= date('Y-m-d\TH:i') ?>"
+            />
 
             <button class="form_button" type="submit" name="schedule_btn">
               Schedule 30 min

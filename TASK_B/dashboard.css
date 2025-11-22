@@ -16,9 +16,8 @@
   justify-content: center;
 }
 
-
 .grid-item form {
-    width: 100%;
+  width: 100%;
 }
 
 .grid-item button {
@@ -35,5 +34,5 @@
 }
 
 .grid-item button:hover {
-  background-color: #357ABD; 
+  background-color: #357abd;
 }
