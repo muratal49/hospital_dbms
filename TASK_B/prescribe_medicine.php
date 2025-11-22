@@ -134,7 +134,7 @@ $conn->close();
           name="notes" 
           id="notes"
         >
-          <?= $notes ?>
+        <?= $notes ?>
         </textarea>
 
 
