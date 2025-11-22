@@ -123,17 +123,6 @@ $conn->close();
         </div>
       </div>
 
-      <!-- Reference Date (optional) -->
-      <div class="form-row">
-        <div class="form-group">
-          <div class="label">Reference Date (optional)</div>
-        </div>
-
-        <div class="form-group">
-          <input type="date" name="reference_date" placeholder="Optional ( Default = ALL )">
-        </div>
-      </div>
-
       <!-- Button -->
       <div class="button-container">
         <button class="button" type="submit" name="caregiver_checkin_btn">Retrieve Patient Data</button>
