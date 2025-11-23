@@ -91,7 +91,7 @@ if (isset($_POST['schedule_btn'])) {
     }
 
     // Check working hours
-    else if ($datetime_obj->format('H:i') < '09:00' || $datetime_obj->format('H:i') > '20:00') {
+    else if ($datetime_obj->format('H:i') < '09:00' || $datetime_obj->format('H:i') > '19:30') {
       $message = 'Appointment time must be between working hours (09:00 - 20:00)';
     }
   }

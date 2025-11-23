@@ -6,8 +6,8 @@ require_once 'db_config.php';
 
 $conn = getConnection();
 
-// Redirect if already logged in
-if (!isset($_SESSION["patient_id"])) {
+// Redirect if not logged in
+if (!isset($_SESSION["doctor_id"])) {
   header('Location: login.php');
   exit();
 }
@@ -17,12 +17,12 @@ $curr_datetime = date('Y-m-d H:i:s');
 
 // Get upcoming appointments
 $sql = "SELECT 
-          CONCAT(d.first_name,' ', d.last_name) AS doctor,
+          CONCAT(p.first_name,' ', p.last_name) AS patient,
           a.start
         FROM appointment a
-        JOIN doctor d ON a.doctor_id = d.id
+        JOIN patient p ON a.patient_id = p.id
         WHERE 
-          a.patient_id = '{$_SESSION['patient_id']}' AND
+          a.doctor_id = '{$_SESSION['doctor_id']}' AND
           a.start >= '$curr_datetime'
         ORDER BY a.start DESC";
 $query = $conn->query($sql);
@@ -31,15 +31,15 @@ $result_upcoming = $query->fetch_all(MYSQLI_ASSOC);
 // Get previous appointments
 $sql = "SELECT 
           a.id,
-          CONCAT(d.first_name,' ', d.last_name) AS doctor, 
+          CONCAT(p.first_name,' ', p.last_name) AS patient, 
           a.start, 
-          CONCAT(p.name, ' ', p.dosage) AS prescription,
+          CONCAT(pr.name, ' ', pr.dosage) AS prescription,
           a.notes
         FROM appointment a
-        JOIN doctor d ON a.doctor_id = d.id
-        LEFT JOIN prescription p ON a.id = p.appointment_id
+        JOIN patient p ON a.patient_id = p.id
+        LEFT JOIN prescription pr ON a.id = pr.appointment_id
         WHERE 
-          a.patient_id = '{$_SESSION['patient_id']}' AND
+          a.doctor_id = '{$_SESSION['doctor_id']}' AND
           a.start < '$curr_datetime'
         ORDER BY a.start DESC";
 
@@ -55,7 +55,7 @@ foreach ($result_prev as $aptmt) {
   // Create new appointment group
   if (!isset($prev_aptmt_groups[$id])) {
     $prev_aptmt_groups[$id] = [
-      "doctor" => $aptmt['doctor'],
+      "patient" => $aptmt['patient'],
       'start' => $aptmt['start'],
       'prescriptions' => [],
       'notes' => $aptmt['notes']
@@ -82,7 +82,7 @@ $conn->close();
 </head>
 
 <body>
-  <h1 class="header">Patient Portal - View Appointments</h1>
+  <h1 class="header">Doctor Portal - View Appointments</h1>
   <div class="container-grid">
     <div class="top">
       <h4 class="top-header">Upcoming Appointments</h4>
@@ -90,7 +90,7 @@ $conn->close();
       <div>
         <table class="table">
           <tr>
-            <th><b>Doctor</b></th>
+            <th><b>Patient</b></th>
             <th><b>Date</b></th>
           </tr>
         </table>
@@ -100,7 +100,7 @@ $conn->close();
         <table class="table">
           <?php foreach ($result_upcoming as $aptmt): ?>
             <tr>
-              <td><?= $aptmt['doctor'] ?></td>
+              <td><?= $aptmt['patient'] ?></td>
               <td><?= $aptmt["start"] ?></td>
             </tr>
           <?php endforeach; ?>
@@ -114,7 +114,7 @@ $conn->close();
       <div>
         <table class="table">
           <tr>
-            <th><b>Doctor</b></th>
+            <th><b>Patient</b></th>
             <th><b>Date</b></th>
             <th><b>Prescriptions</b></th>
             <th><b>Notes</b></th>
@@ -126,7 +126,7 @@ $conn->close();
         <table class="table">
           <?php foreach ($prev_aptmt_groups as $aptmt): ?>
             <tr>
-              <td><?= $aptmt['doctor'] ?></td>
+              <td><?= $aptmt['patient'] ?></td>
               <td><?= $aptmt['start'] ?></td>
               <td>
                 <?php foreach ($aptmt['prescriptions'] as $prescription): ?>

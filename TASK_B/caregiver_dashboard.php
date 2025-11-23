@@ -16,6 +16,9 @@ if (isset($_POST["checkin_btn"])) {
   unset($_SESSION["doctor_id"]);
   header('Location: login.php');
   exit();
+} else if (isset($_POST['view_appointments_btn'])) {
+  header('Location: doctor_view_appointments.php');
+  exit();
 }
 ?>
 
@@ -42,6 +45,9 @@ if (isset($_POST["checkin_btn"])) {
     </form>
     <form class="grid-item" method="post">
       <button type="submit" name="logout_btn">Log out</button>
+    </form>
+    <form class="grid-item" method="post">
+      <button type="submit" name="view_appointments_btn">View Appointments</button>
     </form>
   </div>
 </body>
