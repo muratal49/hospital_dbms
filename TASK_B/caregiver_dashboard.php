@@ -7,7 +7,7 @@ if (!isset($_SESSION["doctor_id"])) {
 }
 
 if (isset($_POST["checkin_btn"])) {
-  header('Location: caregiver_patient_checkin.php');
+  header('Location: view_patient_information.php');
   exit();
 } else if (isset($_POST["prescribe_btn"])) {
   header('Location: prescribe_medicine.php');

@@ -12,7 +12,7 @@ if (!isset($_SESSION['doctor_id'])) {
 }
 
 if (!isset($_SESSION['checked_in_patient_id'])) {
-  header('Location: caregiver_patient_checkin.php');
+  header('Location: view_patient_information.php');
   exit();
 }
 
@@ -129,7 +129,7 @@ $history = array_values($patient_history);
   </div>
 
   <div>
-    <a href="caregiver_patient_checkin.php">Back</a>
+    <a href="view_patient_information.php">Back</a>
   </div>
 </body>
 </html>

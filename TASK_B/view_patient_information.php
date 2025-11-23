@@ -71,7 +71,7 @@ $conn->close();
   } ?>
 
   <div class="container">
-    <form method="post" action="caregiver_patient_checkin.php">
+    <form method="post" action="view_patient_information.php">
       <!-- Patient Email -->
       <div class="form-row">
         <div class="form-group">
