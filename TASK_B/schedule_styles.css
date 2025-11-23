@@ -113,3 +113,20 @@ th, td {
 table {
   width: 100%;
 }
+
+.backbutton-container {
+  width: 100%;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.backbutton {
+  width: 200px;
+  padding: 10px;
+  font-size: 10px;
+  background-color: lightgray;
+  border: 1px solid #c99;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}

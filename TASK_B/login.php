@@ -131,7 +131,7 @@ $conn->close();
             <label for="caregiver-email">Email:</label>
             <input
               class="form_field"
-              type="text"
+              type="email"
               id="caregiver-email"
               name="email"
               required

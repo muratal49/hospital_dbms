@@ -83,7 +83,7 @@ $history = array_values($patient_history);
   <title>View Patient History</title>
 </head>
 <body>
-  <h1 class="header">Patient History (Doctor View)</h1>
+  <h1 class="header">View Patient History</h1>
   <div class="card">
     <h2>Patient</h2>
     <p><strong>Name:</strong> <?= htmlspecialchars($patient['first_name'] . ' ' . $patient['last_name']) ?></p>

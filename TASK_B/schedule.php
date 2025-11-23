@@ -25,6 +25,11 @@ if (!isset($_SESSION["patient_id"])) {
   exit();
 }
 
+if (isset($_POST['go_back_btn'])) {
+  header('Location: patient_dashboard.php');
+  exit();
+}
+
 if (isset($_POST['search_btn'])) {
   $department = trim($_POST['department']);
   $datestr = trim($_POST['date']);
@@ -201,7 +206,7 @@ $conn->close();
             <label for="date">Date:</label>
             <!-- Need POST to save state on reload -->
             <input class="form_field" type="date" id="date" name="date" min="<?= date('Y-m-d') ?>"
-              value="<?= $_POST['date'] ?? '' ?>" required/>
+              value="<?= $_POST['date'] ?? '' ?>" required />
 
             <button class="form_button" type="submit" name="search_btn">
               View Available Times
@@ -217,11 +222,11 @@ $conn->close();
 
           <div class="form_field_container">
             <label for="id">Doctor ID:</label>
-            <input class="form_field" type="number" id="id" name="id" required/>
+            <input class="form_field" type="number" id="id" name="id" required />
 
             <label for="datetime">Date and Time:</label>
             <input class="form_field" type="datetime-local" id="datetime" name="datetime"
-              min="<?= date('Y-m-d\TH:i') ?>" required/>
+              min="<?= date('Y-m-d\TH:i') ?>" required />
 
             <button class="form_button" type="submit" name="schedule_btn">
               Schedule 30 min
@@ -256,6 +261,11 @@ $conn->close();
         <?php endforeach; ?>
       </table>
     </div>
+  </div>
+  <div class="backbutton-container">
+    <form method="post">
+      <button class="backbutton" type="submit" name="go_back_btn">Back to Dashboard</button>
+    </form>
   </div>
 </body>
 

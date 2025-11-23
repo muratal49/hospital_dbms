@@ -14,6 +14,11 @@ if (!isset($_SESSION["patient_id"])) {
   exit();
 }
 
+if (isset($_POST['go_back_btn'])) {
+  header('Location: patient_dashboard.php');
+  exit();
+}
+
 $this_id = $_SESSION["patient_id"];
 if (isset($_POST["delete_account_btn"])) {
   $sql = "DELETE from patient WHERE id = ?";
@@ -137,6 +142,11 @@ $conn->close();
     </form>
     <form method="post">
       <button class="button" name="delete_account_btn" style="margin-top: 20px">DELETE MY ACCOUNT</button>
+    </form>
+  </div>
+  <div class="button-container">
+    <form method="post">
+      <button class="backbutton" type="submit" name="go_back_btn">Back to Dashboard</button>
     </form>
   </div>
 </body>

@@ -13,6 +13,11 @@ if (!isset($_SESSION["doctor_id"])) {
   exit();
 }
 
+if (isset($_POST['go_back_btn'])) {
+  header('Location: caregiver_dashboard.php');
+  exit();
+}
+
 $now = date('Y-m-d H:i:s');
 $id = $_SESSION["doctor_id"];
 
@@ -128,24 +133,23 @@ $conn->close();
         </button>
       </div>
 
-        <div class="label" style="padding-top: 20px">Appointment notes:</div>
-        <textarea 
-          rows="2" 
-          name="notes" 
-          id="notes"
-        >
+      <div class="label" style="padding-top: 20px">Appointment notes:</div>
+      <textarea rows="2" name="notes" id="notes">
         <?= $notes ?>
-        </textarea>
-
+      </textarea>
 
       <div class="button-container">
         <button class="button" type="submit" name="notes_btn" <?php echo !$has_active_appointment ? 'disabled' : ''; ?>>
           Save
         </button>
       </div>
-
+    </form>
   </div>
-  </form>
+
+  <div class="button-container">
+    <form method="post">
+      <button class="backbutton" type="submit" name="go_back_btn">Back to Dashboard</button>
+    </form>
   </div>
 
 </body>

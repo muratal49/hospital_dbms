@@ -11,8 +11,13 @@ if (!isset($_SESSION["doctor_id"])) {
   exit();
 }
 
+if (isset($_POST['go_back_btn'])) {
+  header('Location: caregiver_dashboard.php');
+  exit();
+}
+
 $message = "";
-if (isset($_POST["caregiver_checkin_btn"])) {
+if (isset($_POST["view_patient_information_btn"])) {
   $email = trim($_POST["email"] ?? '');
 
   // Basic form validation
@@ -85,8 +90,14 @@ $conn->close();
 
       <!-- Button -->
       <div class="button-container">
-        <button class="button" type="submit" name="caregiver_checkin_btn">Retrieve Patient Data</button>
+        <button class="button" type="submit" name="view_patient_information_btn">Retrieve Patient Data</button>
       </div>
+    </form>
+  </div>
+
+  <div class="button-container">
+    <form method="post">
+      <button class="backbutton" type="submit" name="go_back_btn">Back to Dashboard</button>
     </form>
   </div>
 </body>
