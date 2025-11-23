@@ -38,7 +38,7 @@ if (isset($_POST["checkin_btn"])) {
 
   <div class="grid-container">
     <form class="grid-item" method="post">
-      <button type="submit" name="checkin_btn">Patient check-in</button>
+      <button type="submit" name="checkin_btn">View Patient Information</button>
     </form>
     <form class="grid-item" method="post">
       <button type="submit" name="prescribe_btn">Prescribe medicine</button>

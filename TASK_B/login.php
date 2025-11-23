@@ -103,6 +103,7 @@ $conn->close();
               type="email"
               id="patient-email"
               name="email"
+              required
             />
 
             <label for="patient-password">Password:</label>
@@ -111,6 +112,7 @@ $conn->close();
               type="password"
               id="patient-password"
               name="password"
+              required
             />
 
             <button class="form_button" type="submit" name="patient_login_btn">
@@ -132,6 +134,7 @@ $conn->close();
               type="text"
               id="caregiver-email"
               name="email"
+              required
             />
 
             <label for="caregiver-password">Password:</label>
@@ -140,6 +143,7 @@ $conn->close();
               type="password"
               id="caregiver-password"
               name="password"
+              required
             />
 
             <button
