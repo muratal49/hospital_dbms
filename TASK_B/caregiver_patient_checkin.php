@@ -6,9 +6,6 @@ require_once 'db_config.php';
 
 $conn = getConnection();
 
-#caregiver check-in for patient first,last,and dob:
-#Enter patient's first name, last name, and date of birth to check them in:
-
 if (!isset($_SESSION["doctor_id"])) {
   header('Location: login.php');
   exit();
@@ -22,7 +19,7 @@ if (isset($_POST["caregiver_checkin_btn"])) {
   if ($email === '') {
     $message = 'Email must be filled out';
   } else {
-    // Use prepared statements to prevent SQL injection
+    // Check for email matches
     $stmt = $conn->prepare(
       "SELECT id FROM patient WHERE email = ? LIMIT 1"
     );
@@ -30,7 +27,7 @@ if (isset($_POST["caregiver_checkin_btn"])) {
     if ($stmt === false) {
       $message = 'Database error: failed to prepare statement';
     } else {
-      $stmt->bind_param('s',$email);
+      $stmt->bind_param('s', $email);
       if (!$stmt->execute()) {
         $message = 'Database error: failed to execute query';
       } else {
@@ -65,6 +62,13 @@ $conn->close();
 
 <body>
   <h1>Caregiver Portal - Patient Check-in</h1>
+
+  <!-- Error Message -->
+  <?php if ($message != "") {
+    echo "<div class=\"message-container\">
+        <p class=\"error-message\">$message</p>
+      </div>";
+  } ?>
 
   <div class="container">
     <form method="post" action="caregiver_patient_checkin.php">

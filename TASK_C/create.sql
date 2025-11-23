@@ -19,7 +19,6 @@ CREATE TABLE doctor(
 );
 
 CREATE TABLE address_info (
-    -- have two attributes: country, zip, state as primary key
     address_country varchar(50),
     address_zip varchar(15),
     address_state varchar(10),
@@ -28,15 +27,15 @@ CREATE TABLE address_info (
 
 CREATE TABLE patient(
     id int auto_increment primary key,
-    password varchar(50),
-    first_name varchar(50),
-    last_name varchar(50),
-    dob date,
-    phone varchar(20) UNIQUE,
-    email varchar(100) UNIQUE,
-    address_street varchar(100),
-    address_country varchar(50),
-    address_zip varchar(15),
+    password varchar(50) NOT NULL,
+    first_name varchar(50) NOT NULL,
+    last_name varchar(50) NOT NULL,
+    dob date NOT NULL,
+    phone varchar(20) NOT NULL UNIQUE,
+    email varchar(100) NOT NULL UNIQUE,
+    address_street varchar(100) NOT NULL,
+    address_country varchar(50) NOT NULL,
+    address_zip varchar(15) NOT NULL,
     insurance varchar(100),
     pharmacy_address varchar(100),
 

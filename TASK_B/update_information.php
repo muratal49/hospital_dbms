@@ -57,11 +57,20 @@ if (isset($_POST["update_info_btn"])) {
   $session_first_name = $row['first_name'];
   $session_last_name = $row['last_name'];
 
-  $sql2 = "SELECT * FROM patient WHERE id != '$id' AND email = '$email'";
+  $sql2 = "SELECT email, phone FROM patient WHERE id != '$id' AND (email = '$email' OR phone = '$phone')";
   $result2 = $conn->query($sql2);
 
   if ($result2->num_rows > 0) {
-    $message = 'Please use a different email address.';
+    $existing = $result2->fetch_assoc();
+
+    if ($existing['phone'] == $phone) {
+      $message = 'Please use a different phone number.';
+    } elseif ($existing['email'] == $email) {
+      $message = 'Please use a different email address';
+    } else {
+      $message = 'Email or phone already in use';
+    }
+
   }
 
   if ($message == '') {
